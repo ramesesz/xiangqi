@@ -225,11 +225,84 @@ public class XiangqiGame extends Game implements Serializable{
 		return false;
 	}
 	
+	public String[] getTranslatedMove(String[] moveString) {
+		/* c-c -> 2-2
+		 * 3 4    6 5
+		 */
+	}
+	
+	// Übersetzt die Zeile in die Indexposition des Arrays
+		public int zeileMove(String move) {
+			int zeile = 8;
+			switch (move.toCharArray()[1]) {
+			case '1':
+				zeile = 7;
+				break;
+			case '2':
+				zeile = 6;
+				break;
+			case '3':
+				zeile = 5;
+				break;
+			case '4':
+				zeile = 4;
+				break;
+			case '5':
+				zeile = 3;
+				break;
+			case '6':
+				zeile = 2;
+				break;
+			case '7':
+				zeile = 1;
+				break;
+			case '8':
+				zeile = 0;
+				break;
+			//default:
+			//	return -1;
+			}
+
+			return zeile;
+		}
+		
+		public int spalteMove(String move) {
+			int spalte = 8;
+			if (!Character.isAlphabetic(move.toCharArray()[0]))
+				return spalte = Character.getNumericValue(move.toCharArray()[0]);
+			switch (move.toCharArray()[0]) {
+			case 'a':
+				spalte = 0;
+				break;
+			case 'b':
+				spalte = 1;
+				break;
+			case 'c':
+				spalte = 2;
+				break;
+			case 'd':
+				spalte = 3;
+				break;
+			case 'e':
+				spalte = 4;
+				break;
+			case 'f':
+				spalte = 5;
+				break;
+			case 'g':
+				spalte = 6;
+				break;
+			case 'h':
+				spalte = 7;
+				break;
+			default:
+				return spalte = -1;
+			}
+			return spalte;
+		}
+
+	
 	public boolean checkGeneral(char[][] board, String[] translatedMove) {
-		
-		
-		
-		
 		
 		return true;
 	}
