@@ -2,7 +2,7 @@ package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
 import de.tuberlin.sese.swtpp.gameserver.model.*;
 //TODO: more imports from JVM allowed here
-
+import java.util.Arrays;
 
 import java.io.Serializable;
 
@@ -226,37 +226,43 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 	
 	public String[] getTranslatedMove(String[] moveString) {
-		/* c-c -> 2-2
-		 * 3 4    6 5
-		 */
+		// [c3]-[c4] -> [26][25]
+		String[] move = moveString.split("-");
+		translatedMove[0] = 
 	}
 	
-	// ï¿½bersetzt die Zeile in die Indexposition des Arrays
+	// Übersetzt die Zeile in die Indexposition des Arrays
 		public int zeileMove(String move) {
 			int zeile = 8;
 			switch (move.toCharArray()[1]) {
+			case '0':
+				zeile = 9;
+				break;
 			case '1':
-				zeile = 7;
+				zeile = 8;
 				break;
 			case '2':
-				zeile = 6;
+				zeile = 7;
 				break;
 			case '3':
-				zeile = 5;
+				zeile = 6;
 				break;
 			case '4':
-				zeile = 4;
+				zeile = 5;
 				break;
 			case '5':
-				zeile = 3;
+				zeile = 4;
 				break;
 			case '6':
-				zeile = 2;
+				zeile = 3;
 				break;
 			case '7':
-				zeile = 1;
+				zeile = 2;
 				break;
 			case '8':
+				zeile = 1;
+				break;
+			case '9':
 				zeile = 0;
 				break;
 			//default:
@@ -294,6 +300,9 @@ public class XiangqiGame extends Game implements Serializable{
 				break;
 			case 'h':
 				spalte = 7;
+				break;
+			case 'i':
+				spalte = 8;
 				break;
 			default:
 				return spalte = -1;
