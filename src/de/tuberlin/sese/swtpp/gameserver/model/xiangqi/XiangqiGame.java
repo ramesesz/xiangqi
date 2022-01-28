@@ -231,7 +231,7 @@ public class XiangqiGame extends Game implements Serializable{
 		 */
 	}
 	
-	// Übersetzt die Zeile in die Indexposition des Arrays
+	// ï¿½bersetzt die Zeile in die Indexposition des Arrays
 		public int zeileMove(String move) {
 			int zeile = 8;
 			switch (move.toCharArray()[1]) {
@@ -300,6 +300,48 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 			return spalte;
 		}
+	public char[][] FENtoBoard(String boardstr){
+		String[] boardarr = boardstr.split("/");
+		char[][] board = new char[9][10];
+		for(int i=0;i<9;i++) {
+			int n = 0;
+			for(int j=0;j<boardarr[i].length();j++) {
+				if (!Character.isAlphabetic(boardarr[i].charAt(j))) {
+					for (int k = 0; k < Character.getNumericValue(boardarr[i].charAt(j)); k++) {
+						board[i][n] = ' ';
+						n++;
+					}
+				} else {
+					board[i][n] = boardarr[i].charAt(j);
+					n++;
+				}
+			}
+		}
+		return board;
+	}
+	
+	public String boardToFEN(char[][] board) {
+		String state = "";
+		for (int i=0;i<9;i++) {
+			int n = 0;
+			for(int j=0;j<board[i].length;j++) {
+				if (!Character.isAlphabetic(board[i][j])) {
+					n++;
+					if (j == board[i].length - 1)
+						state = state + n;
+				} else {
+					if (n != 0) {
+						state = state + n + board[i][j];
+						n = 0;
+					} else {
+						state = state + board[i][j];
+					}
+				}
+			}
+			if(i!=8) state = state + "/";
+		}
+		return state;
+	}
 
 	
 	public boolean checkGeneral(char[][] board, String[] translatedMove) {
