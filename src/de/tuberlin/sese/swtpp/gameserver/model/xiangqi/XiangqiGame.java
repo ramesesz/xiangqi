@@ -209,6 +209,7 @@ public class XiangqiGame extends Game implements Serializable{
 		//       It can be assumed that the state supplied is a regular board that can be reached during a game.
 		// TODO: implement
 		this.board = state;
+		//random comment
 	}
 
 	@Override
@@ -223,5 +224,13 @@ public class XiangqiGame extends Game implements Serializable{
 
 		return false;
 	}
-
+	
+	public boolean checkGeneral(char[][] board, String[] translatedMove) {
+		
+		
+		
+		
+		
+		return true;
+	}
 }
