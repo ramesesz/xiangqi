@@ -224,7 +224,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return false;
 	}
 	
-	public boolean checkFigur(String translatedMove, char[][] board, char figur){
+	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
 		switch (figur) {
 			case 'G':
 			case 'g':
@@ -264,8 +264,6 @@ public class XiangqiGame extends Game implements Serializable{
 			default:
 				return false;
 			}
-		
-		
 		return true;
 	}
 
@@ -394,8 +392,21 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	
-	public boolean checkGeneral(char[][] board, String[] translatedMove) {
-		
+	public boolean checkGeneral(char[][] board, int[] translatedMove) {
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		String palastSpalte = "345";
+		String palastZeile = "012";
+		//move within palace?
+		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastZeile.contains(String.valueOf(zeileMove1))
+		|| !palastSpalte.contains(String.valueOf(spalteMove2)) || !palastZeile.contains(String.valueOf(zeileMove2)))
+			return false;
+		//does this cover diagonal move?
+		if (Math.abs(spalteMove1 - spalteMove2) > 1 || Math.abs(zeileMove1 - zeileMove2) > 1)
+			return false;
+			
 		return true;
 	}
 }
