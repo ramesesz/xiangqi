@@ -2,7 +2,7 @@ package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
 import de.tuberlin.sese.swtpp.gameserver.model.*;
 //TODO: more imports from JVM allowed here
-
+import java.util.Arrays;
 
 import java.io.Serializable;
 
@@ -209,7 +209,6 @@ public class XiangqiGame extends Game implements Serializable{
 		//       It can be assumed that the state supplied is a regular board that can be reached during a game.
 		// TODO: implement
 		this.board = state;
-		//random comment
 	}
 
 	@Override
@@ -225,81 +224,91 @@ public class XiangqiGame extends Game implements Serializable{
 		return false;
 	}
 	
-	public String[] getTranslatedMove(String[] moveString) {
-		/* c-c -> 2-2
-		 * 3 4    6 5
-		 */
+	public String[] getTranslatedMove(String moveString) {
+		// c3c4 -> [26][25]
+		String translatedMove[] = new String[2];
+		String[] move = moveString.split("-");
+		translatedMove[0] = Integer.toString(zeileMove(move[0])) + Integer.toString(spalteMove(move[0]));
+		translatedMove[1] = Integer.toString(zeileMove(move[1])) + Integer.toString(spalteMove(move[1]));
+		
+		return translatedMove;
 	}
 	
 	// �bersetzt die Zeile in die Indexposition des Arrays
-		public int zeileMove(String move) {
-			int zeile = 8;
-			switch (move.toCharArray()[1]) {
-			case '1':
-				zeile = 7;
-				break;
-			case '2':
-				zeile = 6;
-				break;
-			case '3':
-				zeile = 5;
-				break;
-			case '4':
-				zeile = 4;
-				break;
-			case '5':
-				zeile = 3;
-				break;
-			case '6':
-				zeile = 2;
-				break;
-			case '7':
-				zeile = 1;
-				break;
-			case '8':
-				zeile = 0;
-				break;
-			//default:
-			//	return -1;
-			}
+	public int zeileMove(String move) {
+		int zeile = 10;
+		switch (move.toCharArray()[1]) {
+		case '0':
+			zeile = 9;
+			break;
+		case '1':
+			zeile = 8;
+			break;
+		case '2':
+			zeile = 7;
+			break;
+		case '3':
+			zeile = 6;
+			break;
+		case '4':
+			zeile = 5;
+			break;
+		case '5':
+			zeile = 4;
+			break;
+		case '6':
+			zeile = 3;
+			break;
+		case '7':
+			zeile = 2;
+			break;
+		case '8':
+			zeile = 1;
+			break;
+		case '9':
+			zeile = 0;
+			break;
+		}
 
-			return zeile;
-		}
+		return zeile;
+	}	
 		
-		public int spalteMove(String move) {
-			int spalte = 8;
-			if (!Character.isAlphabetic(move.toCharArray()[0]))
-				return spalte = Character.getNumericValue(move.toCharArray()[0]);
-			switch (move.toCharArray()[0]) {
-			case 'a':
-				spalte = 0;
-				break;
-			case 'b':
-				spalte = 1;
-				break;
-			case 'c':
-				spalte = 2;
-				break;
-			case 'd':
-				spalte = 3;
-				break;
-			case 'e':
-				spalte = 4;
-				break;
-			case 'f':
-				spalte = 5;
-				break;
-			case 'g':
-				spalte = 6;
-				break;
-			case 'h':
-				spalte = 7;
-				break;
-			default:
-				return spalte = -1;
-			}
-			return spalte;
+	public int spalteMove(String move) {
+		int spalte = 9;
+		switch (move.toCharArray()[0]) {
+		case 'a':
+			spalte = 0;
+			break;
+		case 'b':
+			spalte = 1;
+			break;
+		case 'c':
+			spalte = 2;
+			break;
+		case 'd':
+			spalte = 3;
+			break;
+		case 'e':
+			spalte = 4;
+			break;
+		case 'f':
+			spalte = 5;
+			break;
+		case 'g':
+			spalte = 6;
+			break;
+		case 'h':
+			spalte = 7;
+			break;
+		case 'i':
+			spalte = 8;
+			break;
+		default:
+			return spalte = -1;
 		}
+		return spalte;
+	}	
+	
 	public char[][] FENtoBoard(String boardstr){
 		String[] boardarr = boardstr.split("/");
 		char[][] board = new char[9][10];
