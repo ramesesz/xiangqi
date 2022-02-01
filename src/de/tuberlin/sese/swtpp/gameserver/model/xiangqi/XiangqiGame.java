@@ -224,58 +224,101 @@ public class XiangqiGame extends Game implements Serializable{
 		return false;
 	}
 	
-	public String[] getTranslatedMove(String moveString) {
-		// c3c4 -> [26][25]
-		String translatedMove[] = new String[2];
-		String[] move = moveString.split("-");
-		translatedMove[0] = Integer.toString(zeileMove(move[0])) + Integer.toString(spalteMove(move[0]));
-		translatedMove[1] = Integer.toString(zeileMove(move[1])) + Integer.toString(spalteMove(move[1]));
+	public boolean checkFigur(String translatedMove, char[][] board, char figur){
+		switch (figur) {
+			case 'G':
+			case 'g':
+				if (!checkGeneral(board, translatedMove))
+					return false;
+				break;
+			case 'A':
+			case 'a':
+				if (!checkAdvisor(board, translatedMove))
+					return false;
+				break;
+			case 'E':
+			case 'e':
+				if (!checkElephant(board, translatedMove))
+					return false;
+				break;
+			case 'H':
+			case 'h':
+				if (!checkHorse(board, translatedMove))
+					return false;
+				break;
+			case 'R':
+			case 'r':
+				if (!checkRook(board, translatedMove))
+					return false;
+				break;
+			case 'C':
+			case 'c':
+				if (!checkCannon(board, translatedMove, figur, schlagen))
+					return false;
+				break;
+			case 'S':
+			case 's':
+				if (!checkSoldier(board, translatedMove, figur, schlagen))
+					return false;
+				break;
+			default:
+				return false;
+			}
 		
-		return translatedMove;
+		
+		return true;
+	}
+
+	public boolean startZielIsValid(char[][] board, int[] translatedMove, Player player){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		//same start and destination?
+		if(spalteMove1 == spalteMove2 && zeileMove1 == zeileMove2) 
+			return false;
+		//piece to be moved belongs to enemy?
+		if(!Character.isAlphabetic(board[spalteMove1][zeileMove1]) 
+		|| player == this.redPlayer && Character.isLowerCase(board[spalteMove1][zeileMove1]) 
+		|| player == this.blackPlayer && Character.isUpperCase(board[spalteMove1][zeileMove1])) 
+			return false;
+		//piece at dest belongs to player?
+		if(player == this.redPlayer && Character.isUpperCase(board[spalteMove2][zeileMove2])
+		|| player == this.blackPlayer && Character.isLowerCase(board[spalteMove2][zeileMove2]))
+			return false;
+
+		return true;
+	}
+
+	//Equivalent to checkMoveFormat()
+	public boolean moveInBoard(String moveString){
+		//checks whether move is within board limits
+		String validZeile = "0123456789";
+		String validSpalte = "abcdefghij";
+
+		char[] move = moveString.toCharArray();
+		
+		if(!validSpalte.contains(String.valueOf(move[0])) || !validZeile.contains(String.valueOf(move[1])) 
+		|| !validSpalte.contains(String.valueOf(move[3])) || !validZeile.contains(String.valueOf(move[4])) || move[2] != '-') return false;
+
+		return true;
 	}
 	
-	// �bersetzt die Zeile in die Indexposition des Arrays
-	public int zeileMove(String move) {
-		int zeile = 10;
-		switch (move.toCharArray()[1]) {
-		case '0':
-			zeile = 9;
-			break;
-		case '1':
-			zeile = 8;
-			break;
-		case '2':
-			zeile = 7;
-			break;
-		case '3':
-			zeile = 6;
-			break;
-		case '4':
-			zeile = 5;
-			break;
-		case '5':
-			zeile = 4;
-			break;
-		case '6':
-			zeile = 3;
-			break;
-		case '7':
-			zeile = 2;
-			break;
-		case '8':
-			zeile = 1;
-			break;
-		case '9':
-			zeile = 0;
-			break;
-		}
+	public int[] getTranslatedMove(String moveString) {
+		// c3-c4 -> [2625]
+		int translatedMove[] = new int[4];
+		char[] move = moveString.toCharArray();
+		translatedMove[0] = spalteMove(move[0]);
+		translatedMove[1] = move[1];
+		translatedMove[2] = spalteMove(move[3]);
+		translatedMove[3] = move[4];
 
-		return zeile;
-	}	
-		
-	public int spalteMove(String move) {
-		int spalte = 9;
-		switch (move.toCharArray()[0]) {
+		return translatedMove;
+	}
+
+	public int spalteMove(char move) {
+		int spalte = -1;
+		switch (move) {
 		case 'a':
 			spalte = 0;
 			break;
@@ -303,8 +346,6 @@ public class XiangqiGame extends Game implements Serializable{
 		case 'i':
 			spalte = 8;
 			break;
-		default:
-			return spalte = -1;
 		}
 		return spalte;
 	}	
