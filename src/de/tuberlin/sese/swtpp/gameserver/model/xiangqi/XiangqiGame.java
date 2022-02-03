@@ -391,22 +391,53 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 
-	
-	public boolean checkGeneral(char[][] board, int[] translatedMove) {
+	public boolean checkGeneral(int[] translatedMove, Player player) {
 		int spalteMove1 = translatedMove[0];
 		int zeileMove1 = translatedMove[1];
 		int spalteMove2 = translatedMove[2];
 		int zeileMove2 = translatedMove[3];
 		String palastSpalte = "345";
-		String palastZeile = "012";
+		String palastZeileRot = "012";
+		String palastZeileSchwarz = "789";
 		//move within palace?
-		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastZeile.contains(String.valueOf(zeileMove1))
-		|| !palastSpalte.contains(String.valueOf(spalteMove2)) || !palastZeile.contains(String.valueOf(zeileMove2)))
+		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastSpalte.contains(String.valueOf(spalteMove2))){
 			return false;
-		//does this cover diagonal move?
+		}
+		if(player == this.redPlayer && (!palastZeileRot.contains(String.valueOf(zeileMove1)) || !palastZeileRot.contains(String.valueOf(zeileMove2)))){
+			return false;
+		}
+		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(zeileMove1)) || !palastZeileSchwarz.contains(String.valueOf(zeileMove2)))){
+			return false;
+		}
+		//move one space?
 		if (Math.abs(spalteMove1 - spalteMove2) > 1 || Math.abs(zeileMove1 - zeileMove2) > 1)
 			return false;
-			
+
+		return true;
+	}
+
+	public boolean checkAdvisor(int[] translatedMove, Player player){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		String palastSpalte = "345";
+		String palastZeileRot = "012";
+		String palastZeileSchwarz = "789";
+		//move within palace?
+		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastSpalte.contains(String.valueOf(spalteMove2))){
+			return false;
+		}
+		if(player == this.redPlayer && (!palastZeileRot.contains(String.valueOf(zeileMove1)) || !palastZeileRot.contains(String.valueOf(zeileMove2)))){
+			return false;
+		}
+		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(zeileMove1)) || !palastZeileSchwarz.contains(String.valueOf(zeileMove2)))){
+			return false;
+		}
+		//move one space diagonally?
+		if (Math.abs(spalteMove1 - spalteMove2) != 1 || Math.abs(zeileMove1 - zeileMove2) != 1)
+			return false;
+
 		return true;
 	}
 }
