@@ -102,7 +102,7 @@ public class XiangqiGame extends Game implements Serializable{
 
 	@Override
 	public String nextPlayerString() {
-		return isRedNext() ? "w" : "b";
+		return isRedNext() ? "r" : "b";
 	}
 
 	@Override
@@ -220,8 +220,27 @@ public class XiangqiGame extends Game implements Serializable{
 	@Override
 	public boolean tryMove(String moveString, Player player) {
 		// TODO: implement
-
-		return false;
+		// Verlauf: check if move is valid -> do the move (modify board) -> set next player -> add to history -> check if someone won
+		if(!checkMove(moveString, player)) return false;
+		if(!doMove(moveString, player)) return false;
+		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
+		this.history.add(new Move(moveString,getBoard(),player));
+		// check if someone won
+		return true;
+	}
+	
+	public boolean doMove(String moveString, Player player) {
+		char[][] board = FENtoBoard(getBoard());
+		int[] move = getTranslatedMove(moveString);
+		char startFigur = board[move[0]][move[1]];
+		char zielFigur = board[move[0]][move[1]];
+		// You can't directly kill the general
+		if (Character.toLowerCase(zielFigur)=='g') return false;
+		board[move[0]][move[1]] = ' ';
+		board[move[2]][move[3]] = startFigur;
+		String newBoard = boardToFEN(board);
+		setBoard(newBoard);
+		return true;
 	}
 	
 	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
@@ -266,6 +285,14 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 		return true;
 	}
+	
+	public boolean checkMove(String moveString, Player player){
+		char[][] boardArr = FENtoBoard(getBoard());
+		int[] move = getTranslatedMove(moveString);
+		if(!startZielIsValid(boardArr, move, player)) return false;
+		if(!moveInBoard(moveString)) return false;
+		return true;
+	}
 
 	public boolean startZielIsValid(char[][] board, int[] translatedMove, Player player){
 		int spalteMove1 = translatedMove[0];
@@ -306,10 +333,10 @@ public class XiangqiGame extends Game implements Serializable{
 		// c3-c4 -> [2625]
 		int translatedMove[] = new int[4];
 		char[] move = moveString.toCharArray();
-		translatedMove[0] = spalteMove(move[0]);
-		translatedMove[1] = move[1];
-		translatedMove[2] = spalteMove(move[3]);
-		translatedMove[3] = move[4];
+		translatedMove[1] = spalteMove(move[0]);
+		translatedMove[0] = 9 - Character.getNumericValue(move[1]);
+		translatedMove[3] = spalteMove(move[3]);
+		translatedMove[2] = 9 - Character.getNumericValue(move[4]);
 
 		return translatedMove;
 	}
@@ -350,8 +377,8 @@ public class XiangqiGame extends Game implements Serializable{
 	
 	public char[][] FENtoBoard(String boardstr){
 		String[] boardarr = boardstr.split("/");
-		char[][] board = new char[9][10];
-		for(int i=0;i<9;i++) {
+		char[][] board = new char[10][9];
+		for(int i=0;i<10;i++) {
 			int n = 0;
 			for(int j=0;j<boardarr[i].length();j++) {
 				if (!Character.isAlphabetic(boardarr[i].charAt(j))) {
@@ -370,7 +397,7 @@ public class XiangqiGame extends Game implements Serializable{
 	
 	public String boardToFEN(char[][] board) {
 		String state = "";
-		for (int i=0;i<9;i++) {
+		for (int i=0;i<10;i++) {
 			int n = 0;
 			for(int j=0;j<board[i].length;j++) {
 				if (!Character.isAlphabetic(board[i][j])) {
@@ -386,7 +413,7 @@ public class XiangqiGame extends Game implements Serializable{
 					}
 				}
 			}
-			if(i!=8) state = state + "/";
+			if(i!=9) state = state + "/";
 		}
 		return state;
 	}
