@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.io.Serializable;
 
 public class XiangqiGame extends Game implements Serializable{
-
+//random comment
 	/**
 	 *
 	 */
