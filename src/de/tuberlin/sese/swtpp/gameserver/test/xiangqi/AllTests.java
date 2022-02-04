@@ -5,6 +5,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ XiangqiGameTest.class, TryMoveIntegrationTest.class})
+@SuiteClasses({ XiangqiGameTest.class, TryMoveIntegrationTest.class, ExtendedTest.class})
 public class AllTests {
 }
