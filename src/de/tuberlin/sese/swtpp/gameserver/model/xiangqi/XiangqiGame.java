@@ -222,14 +222,14 @@ public class XiangqiGame extends Game implements Serializable{
 		// TODO: implement
 		// Verlauf: check if move is valid -> do the move (modify board) -> set next player -> add to history -> check if someone won
 		if(!checkMove(moveString, player)) return false;
-		if(!doMove(moveString, player)) return false;
+		if(!doMove(moveString)) return false;
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
 		return true;
 	}
 	
-	public boolean doMove(String moveString, Player player) {
+	public boolean doMove(String moveString) {
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
