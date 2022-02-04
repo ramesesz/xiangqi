@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.io.Serializable;
 
 public class XiangqiGame extends Game implements Serializable{
-
+//random comment
 	/**
 	 *
 	 */
@@ -467,9 +467,61 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 
-	public boolean checkElephant(){
+	public boolean checkElephant(int[] translatedMove, Player player){
+		String redZeile = "56789";
+		String blackZeile = "01234";
+		//elephant stays in own field?
+		if (player == this.redPlayer){
+			if(!redZeile.contains(String.valueOf(translatedMove[1])) || !redZeile.contains(String.valueOf(translatedMove[3]))) 
+				return false;
+		}
+		if (player == this.blackPlayer){
+			if(!blackZeile.contains(String.valueOf(translatedMove[1])) || !blackZeile.contains(String.valueOf(translatedMove[3]))) 
+				return false;
+		}
+		//move 2 paces diagonally?
+		if (Math.abs(translatedMove[0] - translatedMove[2]) != 2 || Math.abs(translatedMove[1] - translatedMove[3]) != 2)
+			return false;
+
+		return true;
+	}
+
+	public boolean checkHorse(char[][] board, int[] translatedMove, Player player){
+		//schwierig
+		return true;
+	}
+
+	public boolean checkRook(char[][] board, int[] translatedMove, Player player){
 		
-		
+		return true;
+	}
+
+	public boolean checkRookVertical(char[][] board, int[] translatedMove){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		if (zeileStart - zeileZiel > 1) {
+			int steps = zeileStart - zeileZiel;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileStart - i][spalteStart]))
+					return false;
+			}
+		}
+
+		if (zeileStart - zeileZiel < 1) {
+			int steps = Math.abs(zeileStart - zeileZiel);
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileStart + i][spalteStart]))
+					return false;
+			}
+		}
+
+
+		return true;
+	}
+
+	public boolean checkRookHorizontal(char[][] board, int[] translatedMove){
 		return true;
 	}
 }
