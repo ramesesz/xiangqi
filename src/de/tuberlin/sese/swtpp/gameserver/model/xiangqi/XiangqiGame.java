@@ -467,34 +467,34 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 	
 	public boolean checkGeneral(int[] translatedMove, Player player) {
-		// int spalteMove1 = translatedMove[0];
-		// int zeileMove1 = translatedMove[1];
-		// int spalteMove2 = translatedMove[2];
-		// int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		String palastSpalte = "345";
 		String palastZeileRot = "012";
 		String palastZeileSchwarz = "789";
 		//move within palace?
-		if(!palastSpalte.contains(String.valueOf(translatedMove[0])) || !palastSpalte.contains(String.valueOf(translatedMove[2]))){
+		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastSpalte.contains(String.valueOf(spalteMove2))){
 			return false;
 		}
-		if(player == this.redPlayer && (!palastZeileRot.contains(String.valueOf(translatedMove[1])) || !palastZeileRot.contains(String.valueOf(translatedMove[3])))){
+		if(player == this.redPlayer && (!palastZeileRot.contains(String.valueOf(zeileMove1)) || !palastZeileRot.contains(String.valueOf(zeileMove2)))){
 			return false;
 		}
-		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(translatedMove[1])) || !palastZeileSchwarz.contains(String.valueOf(translatedMove[3])))){
+		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(zeileMove1)) || !palastZeileSchwarz.contains(String.valueOf(zeileMove2)))){
 			return false;
 		}
-		if(Math.abs(translatedMove[0] - translatedMove[2]) > 1 || Math.abs(translatedMove[1] - translatedMove[3]) > 1)
+		if(Math.abs(zeileMove1 - zeileMove2) > 1 || Math.abs(spalteMove1 - spalteMove2) > 1)
 			return false; //move one space?
 
 		return true;
 	}
 
 	public boolean checkAdvisor(int[] translatedMove, Player player){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
-		int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		String palastSpalte = "345";
 		String palastZeileRot = "012";
 		String palastZeileSchwarz = "789";
@@ -516,24 +516,28 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkElephant(int[] translatedMove, Player player){
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		String redZeile = "56789";
 		String blackZeile = "01234";
 		//elephant stays in own field?
 		if (player == this.redPlayer){
-			if(!redZeile.contains(String.valueOf(translatedMove[1])) || !redZeile.contains(String.valueOf(translatedMove[3]))) 
+			if(!redZeile.contains(String.valueOf(zeileMove1)) || !redZeile.contains(String.valueOf(zeileMove2))) 
 				return false;
 		}
 		if (player == this.blackPlayer){
-			if(!blackZeile.contains(String.valueOf(translatedMove[1])) || !blackZeile.contains(String.valueOf(translatedMove[3]))) 
+			if(!blackZeile.contains(String.valueOf(zeileMove1)) || !blackZeile.contains(String.valueOf(zeileMove2))) 
 				return false;
 		}
 		//move 2 paces diagonally?
-		if (Math.abs(translatedMove[0] - translatedMove[2]) != 2 || Math.abs(translatedMove[1] - translatedMove[3]) != 2)
+		if (Math.abs(zeileMove1 - zeileMove2) != 2 || Math.abs(spalteMove1 - spalteMove2) != 2)
 			return false;
 
 		return true;
 	}
-
+	//index translated move fixed until here
 	public boolean checkHorse(char[][] board, int[] translatedMove){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
