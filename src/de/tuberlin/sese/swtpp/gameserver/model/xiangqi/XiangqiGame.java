@@ -243,49 +243,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 	
-	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
-		switch (figur) {
-			case 'G':
-			case 'g':
-				if (!checkGeneral(board, translatedMove))
-					return false;
-				break;
-			case 'A':
-			case 'a':
-				if (!checkAdvisor(board, translatedMove))
-					return false;
-				break;
-			case 'E':
-			case 'e':
-				if (!checkElephant(board, translatedMove))
-					return false;
-				break;
-			case 'H':
-			case 'h':
-				if (!checkHorse(board, translatedMove))
-					return false;
-				break;
-			case 'R':
-			case 'r':
-				if (!checkRook(board, translatedMove))
-					return false;
-				break;
-			case 'C':
-			case 'c':
-				if (!checkCannon(board, translatedMove, figur, schlagen))
-					return false;
-				break;
-			case 'S':
-			case 's':
-				if (!checkSoldier(board, translatedMove, figur, schlagen))
-					return false;
-				break;
-			default:
-				return false;
-			}
-		return true;
-	}
-	
+
 	public boolean checkMove(String moveString, Player player){
 		char[][] boardArr = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
@@ -418,6 +376,49 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 
+	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
+		switch (figur) {
+			case 'G':
+			case 'g':
+				if (!checkGeneral(board, translatedMove))
+					return false;
+				break;
+			case 'A':
+			case 'a':
+				if (!checkAdvisor(board, translatedMove))
+					return false;
+				break;
+			case 'E':
+			case 'e':
+				if (!checkElephant(board, translatedMove))
+					return false;
+				break;
+			case 'H':
+			case 'h':
+				if (!checkHorse(board, translatedMove))
+					return false;
+				break;
+			case 'R':
+			case 'r':
+				if (!checkRook(board, translatedMove))
+					return false;
+				break;
+			case 'C':
+			case 'c':
+				if (!checkCannon(board, translatedMove, figur, schlagen))
+					return false;
+				break;
+			case 'S':
+			case 's':
+				if (!checkSoldier(board, translatedMove, figur, schlagen))
+					return false;
+				break;
+			default:
+				return false;
+			}
+		return true;
+	}
+	
 	public boolean checkGeneral(int[] translatedMove, Player player) {
 		// int spalteMove1 = translatedMove[0];
 		// int zeileMove1 = translatedMove[1];
@@ -526,6 +527,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove1 = translatedMove[1];
 		int spalteMove2 = translatedMove[2];
 		//int zeileMove2 = translatedMove[3];
+		
 		//check left
 		if (spalteMove1 - spalteMove2 > 1) {
 			int steps = spalteMove1 - spalteMove2;
