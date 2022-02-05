@@ -243,49 +243,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 	
-	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
-		switch (figur) {
-			case 'G':
-			case 'g':
-				if (!checkGeneral(board, translatedMove))
-					return false;
-				break;
-			case 'A':
-			case 'a':
-				if (!checkAdvisor(board, translatedMove))
-					return false;
-				break;
-			case 'E':
-			case 'e':
-				if (!checkElephant(board, translatedMove))
-					return false;
-				break;
-			case 'H':
-			case 'h':
-				if (!checkHorse(board, translatedMove))
-					return false;
-				break;
-			case 'R':
-			case 'r':
-				if (!checkRook(board, translatedMove))
-					return false;
-				break;
-			case 'C':
-			case 'c':
-				if (!checkCannon(board, translatedMove, figur, schlagen))
-					return false;
-				break;
-			case 'S':
-			case 's':
-				if (!checkSoldier(board, translatedMove, figur, schlagen))
-					return false;
-				break;
-			default:
-				return false;
-			}
-		return true;
-	}
-	
+
 	public boolean checkMove(String moveString, Player player){
 		char[][] boardArr = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
@@ -419,6 +377,49 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 
+	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
+		switch (figur) {
+			case 'G':
+			case 'g':
+				if (!checkGeneral(board, translatedMove))
+					return false;
+				break;
+			case 'A':
+			case 'a':
+				if (!checkAdvisor(board, translatedMove))
+					return false;
+				break;
+			case 'E':
+			case 'e':
+				if (!checkElephant(board, translatedMove))
+					return false;
+				break;
+			case 'H':
+			case 'h':
+				if (!checkHorse(board, translatedMove))
+					return false;
+				break;
+			case 'R':
+			case 'r':
+				if (!checkRook(board, translatedMove))
+					return false;
+				break;
+			case 'C':
+			case 'c':
+				if (!checkCannon(board, translatedMove, figur, schlagen))
+					return false;
+				break;
+			case 'S':
+			case 's':
+				if (!checkSoldier(board, translatedMove, figur, schlagen))
+					return false;
+				break;
+			default:
+				return false;
+			}
+		return true;
+	}
+	
 	public boolean checkGeneral(int[] translatedMove, Player player) {
 		// int spalteMove1 = translatedMove[0];
 		// int zeileMove1 = translatedMove[1];
@@ -519,29 +520,54 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkRookVertical(char[][] board, int[] translatedMove){
 		int spalteMove1 = translatedMove[0];
 		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
+		//int spalteMove2 = translatedMove[2];
 		int zeileMove2 = translatedMove[3];
-		if (zeileStart - zeileZiel > 1) {
-			int steps = zeileStart - zeileZiel;
+		
+		//check above
+		if (zeileMove1 - zeileMove2 > 1) {
+			int steps = zeileMove1 - zeileMove2;
 			for (int i = 1; i < steps; i++) {
-				if (Character.isAlphabetic(board[zeileStart - i][spalteStart]))
+				if (Character.isAlphabetic(board[zeileMove1 - i][spalteMove1]))
 					return false;
 			}
 		}
-
-		if (zeileStart - zeileZiel < 1) {
-			int steps = Math.abs(zeileStart - zeileZiel);
+		//check below
+		if (zeileMove1 - zeileMove2 < 1) {
+			int steps = Math.abs(zeileMove1 - zeileMove2);
 			for (int i = 1; i < steps; i++) {
-				if (Character.isAlphabetic(board[zeileStart + i][spalteStart]))
+				if (Character.isAlphabetic(board[zeileMove1 + i][spalteMove1]))
 					return false;
 			}
 		}
-
-
 		return true;
 	}
 
 	public boolean checkRookHorizontal(char[][] board, int[] translatedMove){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		//int zeileMove2 = translatedMove[3];
+		
+		//check left
+		if (spalteMove1 - spalteMove2 > 1) {
+			int steps = spalteMove1 - spalteMove2;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1][spalteMove1 - i]))
+					return false;
+			}
+		}
+		//check right
+		if (spalteMove1 - spalteMove2 < 1) {
+			int steps = Math.abs(spalteMove1 - spalteMove2);
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1][spalteMove1 + i]))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean checkCannon(char[][] board, int[] translatedMove, boolean schlagen){
 		return true;
 	}
 }
