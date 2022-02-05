@@ -413,21 +413,21 @@ public class XiangqiGame extends Game implements Serializable{
 		return validMoves(player, FENtoBoard(getBoard()));
 	}
 
-	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
+	public boolean checkFigur(int[] translatedMove, char[][] board, char figur, Player player){
 		switch (figur) {
 			case 'G':
 			case 'g':
-				if (!checkGeneral(board, translatedMove))
+				if (!checkGeneral(translatedMove, player))
 					return false;
 				break;
 			case 'A':
 			case 'a':
-				if (!checkAdvisor(board, translatedMove))
+				if (!checkAdvisor(translatedMove, player))
 					return false;
 				break;
 			case 'E':
 			case 'e':
-				if (!checkElephant(board, translatedMove))
+				if (!checkElephant(translatedMove, player))
 					return false;
 				break;
 			case 'H':
@@ -437,17 +437,17 @@ public class XiangqiGame extends Game implements Serializable{
 				break;
 			case 'R':
 			case 'r':
-				if (!checkRook(board, translatedMove))
+				if (!checkRook(board, translatedMove, player))
 					return false;
 				break;
 			case 'C':
 			case 'c':
-				if (!checkCannon(board, translatedMove, figur, schlagen))
+				if (!checkCannon(board, translatedMove))
 					return false;
 				break;
 			case 'S':
 			case 's':
-				if (!checkSoldier(board, translatedMove, figur, schlagen))
+				if (!checkSoldier(translatedMove, player))
 					return false;
 				break;
 			default:
@@ -474,7 +474,7 @@ public class XiangqiGame extends Game implements Serializable{
 		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(translatedMove[1])) || !palastZeileSchwarz.contains(String.valueOf(translatedMove[3])))){
 			return false;
 		}
-		if (Math.abs(translatedMove[0] - translatedMove[2]) > 1 || Math.abs(translatedMove[1] - translatedMove[3]) > 1)
+		if(Math.abs(translatedMove[0] - translatedMove[2]) > 1 || Math.abs(translatedMove[1] - translatedMove[3]) > 1)
 			return false; //move one space?
 
 		return true;
@@ -524,7 +524,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 
-	public boolean checkHorse(char[][] board, int[] translatedMove, Player player){
+	public boolean checkHorse(char[][] board, int[] translatedMove){
 		int spalteMove1 = translatedMove[0];
 		int zeileMove1 = translatedMove[1];
 		int spalteMove2 = translatedMove[2];
@@ -549,7 +549,10 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkRook(char[][] board, int[] translatedMove, Player player){
-		
+		if(!checkRookVertical(board, translatedMove))
+			return false;
+		if(!checkRookHorizontal(board, translatedMove))
+			return false;
 		return true;
 	}
 
@@ -568,7 +571,7 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 		}
 		//check below
-		if (zeileMove1 - zeileMove2 < 1) {
+		else if (zeileMove1 - zeileMove2 < 1) {
 			int steps = Math.abs(zeileMove1 - zeileMove2);
 			for (int i = 1; i < steps; i++) {
 				if (Character.isAlphabetic(board[zeileMove1 + i][spalteMove1]))
@@ -593,7 +596,7 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 		}
 		//check right
-		if (spalteMove1 - spalteMove2 < 1) {
+		else if (spalteMove1 - spalteMove2 < 1) {
 			int steps = Math.abs(spalteMove1 - spalteMove2);
 			for (int i = 1; i < steps; i++) {
 				if (Character.isAlphabetic(board[zeileMove1][spalteMove1 + i]))
@@ -603,7 +606,148 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 
-	public boolean checkCannon(char[][] board, int[] translatedMove, boolean schlagen){
+	public boolean checkCannon(char[][] board, int[] translatedMove){
+		char startFigur = board[translatedMove[0]][translatedMove[1]];
+		char zielFigur = board[translatedMove[2]][translatedMove[3]];
+		if((Character.isUpperCase(startFigur) && Character.isLowerCase(zielFigur))
+		|| (Character.isLowerCase(startFigur) && Character.isUpperCase(zielFigur))){
+			if(!checkCannonTake(board, translatedMove))
+				return false;
+		}
+		else{
+			if(!checkCannonMove(board, translatedMove))
+				return false;
+		}
 		return true;
 	}
+
+	public boolean checkCannonMove(char[][] board, int[] translatedMove){
+		if(!checkRookVertical(board, translatedMove))
+			return false;
+		if(!checkRookHorizontal(board, translatedMove))
+			return false;
+
+		return true;
+	}
+
+	public boolean checkCannonTake(char[][] board, int[] translatedMove){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		
+		if(Math.abs(spalteMove1 - spalteMove2) + Math.abs(zeileMove1 - zeileMove2) == 1)
+			return false;
+		if(!checkCannonTakeVertical(board, translatedMove))
+			return false;
+		if(!checkCannonTakeHorizontal(board, translatedMove))
+			return false;
+
+		return true;
+	}
+
+	public boolean checkCannonTakeVertical(char[][] board, int[] translatedMove){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		//int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		//check above
+		if (zeileMove1 - zeileMove2 > 1) {
+			int steps = zeileMove1 - zeileMove2;
+			int counter = 0;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1 - i][spalteMove1]))
+					counter = counter + 1;
+			}
+			if(counter != 1)
+				return false;
+		}
+		//check below
+		else if (zeileMove1 - zeileMove2 < 1) {
+			int steps = zeileMove1 - zeileMove2;
+			int counter = 0;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1 + i][spalteMove1]))
+					counter = counter + 1;
+			}
+			if(counter != 1)
+				return false;
+		}
+		return true;
+	}
+
+	public boolean checkCannonTakeHorizontal(char[][] board, int[] translatedMove){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		//int zeileMove2 = translatedMove[3];
+		//check above
+		if (spalteMove1 - spalteMove2 > 1) {
+			int steps = spalteMove1 - spalteMove2;
+			int counter = 0;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1][spalteMove1 - i]))
+					counter = counter + 1;
+			}
+			if(counter != 1)
+				return false;
+		}
+		//check below
+		else if (spalteMove1 - spalteMove2 < 1) {
+			int steps = spalteMove1 - spalteMove2;
+			int counter = 0;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1][spalteMove1 + i]))
+					counter = counter + 1;
+			}
+			if(counter != 1)
+				return false;
+		}
+		return true;
+	}
+
+	public boolean checkSoldier(int[] translatedMove, Player player){
+		
+		if(player == this.redPlayer)
+			if(!checkSoldierRed(translatedMove, player)) 
+				return false;
+
+		if(player == this.blackPlayer)
+			if(!checkSoldierBlack(translatedMove, player)) 
+				return false;
+
+		return true;
+	}
+
+	public boolean checkSoldierRed(int[] translatedMove, Player player){
+		String redZeile = "56789";
+		//soldier can only move forward
+		if((translatedMove[1] - translatedMove[3]) == 1 && translatedMove[0] - translatedMove[2] == 0)
+				return true;
+		//if in enemy territory, soldier can move one step left or right
+		if(!redZeile.contains(String.valueOf(translatedMove[1]))){
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
+				return true;
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
+				return true;
+		}
+		return false;
+	}
+
+	public boolean checkSoldierBlack(int[] translatedMove, Player player){
+		String blackZeile = "01234";
+		//soldier can only move forward
+		if((translatedMove[1] - translatedMove[3]) == -1 && translatedMove[0] - translatedMove[2] == 0)
+				return true;
+		//if in enemy territory, soldier can move one step left or right
+		if(!blackZeile.contains(String.valueOf(translatedMove[1]))){
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
+				return true;
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
+				return true;
+		}
+		return false;
+	}
+
+
 }
