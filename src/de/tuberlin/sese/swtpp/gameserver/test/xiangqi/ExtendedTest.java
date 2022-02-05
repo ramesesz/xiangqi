@@ -162,6 +162,7 @@ public class ExtendedTest {
 //    checkElephant
     
     // to check which moves are valid go to http://www.xichess.com/game/create, and use 2 browser to play against yourself
+    // a better visualization of xiangqi rules: https://www.ymimports.com/pages/how-to-play-xiangqi-chinese-chess
 
 //████████╗░█████╗░██████╗░░█████╗░  ██╗  ░█████╗░░█████╗░███╗░░██╗████████╗██╗███╗░░██╗██╗░░░██╗███████╗
 //╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗  ╚═╝  ██╔══██╗██╔══██╗████╗░██║╚══██╔══╝██║████╗░██║██║░░░██║██╔════╝
