@@ -377,41 +377,41 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 
-	public boolean checkFigur(int[] translatedMove, char[][] board, char figur){
+	public boolean checkFigur(int[] translatedMove, char[][] board, char figur, Player player){
 		switch (figur) {
 			case 'G':
 			case 'g':
-				if (!checkGeneral(board, translatedMove))
+				if (!checkGeneral(translatedMove, player))
 					return false;
 				break;
 			case 'A':
 			case 'a':
-				if (!checkAdvisor(board, translatedMove))
+				if (!checkAdvisor(translatedMove, player))
 					return false;
 				break;
 			case 'E':
 			case 'e':
-				if (!checkElephant(board, translatedMove))
+				if (!checkElephant(translatedMove, player))
 					return false;
 				break;
 			case 'H':
 			case 'h':
-				if (!checkHorse(board, translatedMove))
+				if (!checkHorse(board, translatedMove, player))
 					return false;
 				break;
 			case 'R':
 			case 'r':
-				if (!checkRook(board, translatedMove))
+				if (!checkRook(board, translatedMove, player))
 					return false;
 				break;
 			case 'C':
 			case 'c':
-				if (!checkCannon(board, translatedMove, figur, schlagen))
+				if (!checkCannon(board, translatedMove))
 					return false;
 				break;
 			case 'S':
 			case 's':
-				if (!checkSoldier(board, translatedMove, figur, schlagen))
+				if (!checkSoldier(translatedMove, player))
 					return false;
 				break;
 			default:
@@ -567,7 +567,60 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 
-	public boolean checkCannon(char[][] board, int[] translatedMove, boolean schlagen){
+	public boolean checkCannon(char[][] board, int[] translatedMove){
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		//if move
+		if()
+		//if take enemy piece
+
 		return true;
 	}
+
+	public boolean checkSoldier(int[] translatedMove, Player player){
+		
+		if(player == this.redPlayer)
+			if(!checkSoldierRed(translatedMove, player)) 
+				return false;
+
+		if(player == this.blackPlayer)
+			if(!checkSoldierBlack(translatedMove, player)) 
+				return false;
+
+		return true;
+	}
+
+	public boolean checkSoldierRed(int[] translatedMove, Player player){
+		String redZeile = "56789";
+		//soldier can only move forward
+		if((translatedMove[1] - translatedMove[3]) == 1 && translatedMove[0] - translatedMove[2] == 0)
+				return true;
+		//if in enemy territory, soldier can move one step left or right
+		if(!redZeile.contains(String.valueOf(translatedMove[1]))){
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
+				return true;
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
+				return true;
+		}
+		return false;
+	}
+
+	public boolean checkSoldierBlack(int[] translatedMove, Player player){
+		String blackZeile = "01234";
+		//soldier can only move forward
+		if((translatedMove[1] - translatedMove[3]) == -1 && translatedMove[0] - translatedMove[2] == 0)
+				return true;
+		//if in enemy territory, soldier can move one step left or right
+		if(!blackZeile.contains(String.valueOf(translatedMove[1]))){
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
+				return true;
+			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
+				return true;
+		}
+		return false;
+	}
+
+
 }
