@@ -1,6 +1,8 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
 import de.tuberlin.sese.swtpp.gameserver.model.*;
+
+import java.util.ArrayList;
 //TODO: more imports from JVM allowed here
 import java.util.Arrays;
 
@@ -233,7 +235,7 @@ public class XiangqiGame extends Game implements Serializable{
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
-		char zielFigur = board[move[0]][move[1]];
+		char zielFigur = board[move[2]][move[3]];
 		// You can't directly kill the general
 		if (Character.toLowerCase(zielFigur)=='g') return false;
 		board[move[0]][move[1]] = ' ';
@@ -249,6 +251,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int[] move = getTranslatedMove(moveString);
 		if(!startZielIsValid(boardArr, move, player)) return false;
 		if(!moveInBoard(moveString)) return false;
+		if(!checkFigur(move, boardArr , player)) return false;
 		return true;
 	}
 
@@ -292,6 +295,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int translatedMove[] = new int[4];
 		char[] move = moveString.toCharArray();
 		// invert the column 
+		// move = {zeile1, spalte1, zeile2, spalte2}
 		translatedMove[0] = 9 - Character.getNumericValue(move[1]);
 		translatedMove[1] = spalteMove(move[0]);
 		translatedMove[2] = 9 - Character.getNumericValue(move[4]);
@@ -376,8 +380,43 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		return state;
 	}
+	
+	public ArrayList<String> validMoves(Player player, char[][] board) {
+		String figuren[]= new String[16];
+		String validSpalte = "abcdefghij";
+		ArrayList<String> moveList = new ArrayList<String>();
+		int counter = 0;
+		boolean isRedPlayer = player == redPlayer;
+		
+		for(int i=0;i<10;i++) {
+			for(int j=0;j<9;j++) {
+				char figur = board[i][j];
+				if((isRedPlayer && Character.isUpperCase(figur)) || (!isRedPlayer && Character.isLowerCase(figur))) {
+					figuren[counter]=validSpalte.charAt(j)+Integer.toString(9-i);
+					counter++;
+				}
+			}
+		}
+		
+		for(int n=0;n<counter;n++) {
+			for(int i=0;i<10;i++) {
+				for(int j=0;j<9;j++) {
+					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
+					String moveString=figuren[n]+"-"+moveTo;
+					if (checkMove(moveString, player)) moveList.add(moveString);
+				}
+			}
+		}
+		
+		return moveList;
+	}
+	
+	public ArrayList<String> validMoves(Player player) {
+		return validMoves(player, FENtoBoard(getBoard()));
+	}
 
-	public boolean checkFigur(int[] translatedMove, char[][] board, char figur, Player player){
+	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
+		char figur = board[translatedMove[0]][translatedMove[1]];
 		switch (figur) {
 			case 'G':
 			case 'g':

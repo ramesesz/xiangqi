@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -114,7 +115,7 @@ public class ExtendedTest {
     	game.doMove("a0-a2");
     	// redNext is true because doMove only applies the move to the board and not add it to history or set the next player
     	assertGameState("rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/RC5C1/9/1HEAGAEHR", true, false, false);
-//    	printBoard(game.getBoard());
+    	printBoard(game.getBoard());
     }
     
     @Test
@@ -144,6 +145,18 @@ public class ExtendedTest {
     	assertFalse(game.startZielIsValid(board, game.getTranslatedMove("a0-a3"), blackPlayer));
     	// redPlayer trying to move to same location
     	assertFalse(game.startZielIsValid(board, game.getTranslatedMove("a0-a0"), blackPlayer));
+    }
+    
+    @Test
+    public void testValidMoves() {
+    	startGame(startFEN, true);
+    	ArrayList<String> moveList = game.validMoves(redPlayer);
+    	for (String move: moveList) {
+    		// print valid moves of figur a3
+    		if(move.startsWith("a3")) {
+    			System.out.println(move);
+    		}
+    	}
     }
     
     // functions : 
