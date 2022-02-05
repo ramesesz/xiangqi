@@ -381,10 +381,27 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 	
+	public ArrayList<String> validMoves(Player player,char[][] board, String[] figuren) {
+		String validSpalte = "abcdefghij";
+		ArrayList<String> moveList = new ArrayList<String>();
+		int counter = figuren.length;
+		
+		for(int n=0;n<counter;n++) {
+			for(int i=0;i<10;i++) {
+				for(int j=0;j<9;j++) {
+					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
+					String moveString=figuren[n]+"-"+moveTo;
+					if (checkMove(moveString, player)) moveList.add(moveString);
+				}
+			}
+		}
+		
+		return moveList;
+	}
+	
 	public ArrayList<String> validMoves(Player player, char[][] board) {
 		String figuren[]= new String[16];
 		String validSpalte = "abcdefghij";
-		ArrayList<String> moveList = new ArrayList<String>();
 		int counter = 0;
 		boolean isRedPlayer = player == redPlayer;
 		
@@ -398,17 +415,7 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 		}
 		
-		for(int n=0;n<counter;n++) {
-			for(int i=0;i<10;i++) {
-				for(int j=0;j<9;j++) {
-					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
-					String moveString=figuren[n]+"-"+moveTo;
-					if (checkMove(moveString, player)) moveList.add(moveString);
-				}
-			}
-		}
-		
-		return moveList;
+		return validMoves(player, board, figuren);
 	}
 	
 	public ArrayList<String> validMoves(Player player) {
@@ -528,19 +535,19 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkHorse(char[][] board, int[] translatedMove){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
-		int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		
-		if(spalteMove2-spalteMove1==-2) {
-			if(Character.isAlphabetic(board[spalteMove1-1][zeileMove1])) return false;
-		} else if(zeileMove2-zeileMove1==2) {
-			if(Character.isAlphabetic(board[spalteMove1][zeileMove1+1])) return false;
+		if(zeileMove2-zeileMove1==-2) {
+			if(Character.isAlphabetic(board[zeileMove1-1][spalteMove1])) return false;
 		} else if(spalteMove2-spalteMove1==2) {
-			if(Character.isAlphabetic(board[spalteMove1+1][zeileMove1])) return false;
-		} else if(zeileMove2-zeileMove1==-2) {
-			if(Character.isAlphabetic(board[spalteMove1][zeileMove1-1])) return false;
+			if(Character.isAlphabetic(board[zeileMove1][spalteMove1+1])) return false;
+		} else if(zeileMove2-zeileMove1==2) {
+			if(Character.isAlphabetic(board[zeileMove1+1][spalteMove1])) return false;
+		} else if(spalteMove2-spalteMove1==-2) {
+			if(Character.isAlphabetic(board[zeileMove1][spalteMove1-1])) return false;
 		}
 		
 		if ((Math.abs(zeileMove1- zeileMove2) == 1 && Math.abs(spalteMove1 - spalteMove2) == 2)
@@ -714,8 +721,7 @@ public class XiangqiGame extends Game implements Serializable{
 		if(player == this.redPlayer)
 			if(!checkSoldierRed(translatedMove, player)) 
 				return false;
-
-		if(player == this.blackPlayer)
+		else if(player == this.blackPlayer)
 			if(!checkSoldierBlack(translatedMove, player)) 
 				return false;
 
@@ -725,31 +731,27 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkSoldierRed(int[] translatedMove, Player player){
 		String redZeile = "56789";
 		//soldier can only move forward
-		if((translatedMove[1] - translatedMove[3]) == 1 && translatedMove[0] - translatedMove[2] == 0)
-				return true;
+		if((translatedMove[0] - translatedMove[2]) != 1 || translatedMove[3] - translatedMove[1] != 0)
+				return false;
 		//if in enemy territory, soldier can move one step left or right
-		if(!redZeile.contains(String.valueOf(translatedMove[1]))){
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
-				return true;
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
-				return true;
+		if(!redZeile.contains(String.valueOf(translatedMove[0]))){
+			if((translatedMove[0] - translatedMove[2]) != 0 || Math.abs(translatedMove[3] - translatedMove[1]) != 1)
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	public boolean checkSoldierBlack(int[] translatedMove, Player player){
 		String blackZeile = "01234";
 		//soldier can only move forward
-		if((translatedMove[1] - translatedMove[3]) == -1 && translatedMove[0] - translatedMove[2] == 0)
-				return true;
+		if((translatedMove[0] - translatedMove[2]) != -1 && translatedMove[3] - translatedMove[1] != 0)
+				return false;
 		//if in enemy territory, soldier can move one step left or right
-		if(!blackZeile.contains(String.valueOf(translatedMove[1]))){
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
-				return true;
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
-				return true;
+		if(!blackZeile.contains(String.valueOf(translatedMove[0]))){
+			if((translatedMove[0] - translatedMove[2]) != 0 || Math.abs(translatedMove[3] - translatedMove[1]) != 1)
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 

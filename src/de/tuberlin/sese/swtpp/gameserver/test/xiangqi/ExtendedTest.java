@@ -86,7 +86,6 @@ public class ExtendedTest {
     public void printBoard() {
     	printBoard(game.getBoard());
     }
-	
 
 	/*******************************************
 	 * !!!!!!!!! To be implemented !!!!!!!!!!!!
@@ -94,6 +93,7 @@ public class ExtendedTest {
     
     @Test
     public void testGetTranslatedMove() {
+    	startGame(startFEN, true);
     	// check translation from moveString to boardArr's zeile and spalte number
         int[] move = game.getTranslatedMove("a0-a2");
         int[] expectedMove = {9,0,7,0};
@@ -102,6 +102,7 @@ public class ExtendedTest {
     
     @Test
     public void testBoardConverter() {
+    	startGame(startFEN, true);
     	String board = startFEN;
     	char[][] boardArr = game.FENtoBoard(board);
     	String newBoard = game.boardToFEN(boardArr);
@@ -120,6 +121,7 @@ public class ExtendedTest {
     
     @Test
     public void testMoveInBoard() {
+    	startGame(startFEN, true);
     	// should be true
     	assertTrue(game.moveInBoard("a0-a2"));
     	// z is invalid
@@ -150,12 +152,15 @@ public class ExtendedTest {
     @Test
     public void testValidMoves() {
     	startGame(startFEN, true);
-    	ArrayList<String> moveList = game.validMoves(redPlayer);
+    	String[] figuren = {"b0"};
+    	ArrayList<String> moveList = game.validMoves(redPlayer, game.FENtoBoard(game.getBoard()), figuren);
+    	ArrayList<String> expectedList = new ArrayList<String>();
+    	expectedList.add("b0-a2");
+    	expectedList.add("b0-c2");
+    	assertTrue(moveList.equals(expectedList));
+    	
     	for (String move: moveList) {
-    		// print valid moves of figur a3
-    		if(move.startsWith("a3")) {
-    			System.out.println(move);
-    		}
+    		System.out.println(move);
     	}
     }
     
