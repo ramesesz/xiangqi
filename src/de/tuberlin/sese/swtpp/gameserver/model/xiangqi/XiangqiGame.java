@@ -513,7 +513,10 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkRook(char[][] board, int[] translatedMove, Player player){
-		
+		if(!checkRookVertical(board, translatedMove))
+			return false;
+		if(!checkRookHorizontal(board, translatedMove))
+			return false;
 		return true;
 	}
 
