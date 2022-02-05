@@ -222,14 +222,14 @@ public class XiangqiGame extends Game implements Serializable{
 		// TODO: implement
 		// Verlauf: check if move is valid -> do the move (modify board) -> set next player -> add to history -> check if someone won
 		if(!checkMove(moveString, player)) return false;
-		if(!doMove(moveString, player)) return false;
+		if(!doMove(moveString)) return false;
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
 		return true;
 	}
 	
-	public boolean doMove(String moveString, Player player) {
+	public boolean doMove(String moveString) {
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
@@ -291,10 +291,11 @@ public class XiangqiGame extends Game implements Serializable{
 		// c3-c4 -> [2625]
 		int translatedMove[] = new int[4];
 		char[] move = moveString.toCharArray();
-		translatedMove[1] = spalteMove(move[0]);
+		// invert the column 
 		translatedMove[0] = 9 - Character.getNumericValue(move[1]);
-		translatedMove[3] = spalteMove(move[3]);
+		translatedMove[1] = spalteMove(move[0]);
 		translatedMove[2] = 9 - Character.getNumericValue(move[4]);
+		translatedMove[3] = spalteMove(move[3]);
 
 		return translatedMove;
 	}
@@ -488,8 +489,27 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkHorse(char[][] board, int[] translatedMove, Player player){
-		//schwierig
-		return true;
+		int spalteMove1 = translatedMove[0];
+		int zeileMove1 = translatedMove[1];
+		int spalteMove2 = translatedMove[2];
+		int zeileMove2 = translatedMove[3];
+		
+		if(spalteMove2-spalteMove1==-2) {
+			if(Character.isAlphabetic(board[spalteMove1-1][zeileMove1])) return false;
+		} else if(zeileMove2-zeileMove1==2) {
+			if(Character.isAlphabetic(board[spalteMove1][zeileMove1+1])) return false;
+		} else if(spalteMove2-spalteMove1==2) {
+			if(Character.isAlphabetic(board[spalteMove1+1][zeileMove1])) return false;
+		} else if(zeileMove2-zeileMove1==-2) {
+			if(Character.isAlphabetic(board[spalteMove1][zeileMove1-1])) return false;
+		}
+		
+		if ((Math.abs(zeileMove1- zeileMove2) == 1 && Math.abs(spalteMove1 - spalteMove2) == 2)
+				|| (Math.abs(zeileMove1- zeileMove2) == 2 && Math.abs(spalteMove1 - spalteMove2) == 1)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean checkRook(char[][] board, int[] translatedMove, Player player){
