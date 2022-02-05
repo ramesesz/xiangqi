@@ -251,6 +251,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int[] move = getTranslatedMove(moveString);
 		if(!startZielIsValid(boardArr, move, player)) return false;
 		if(!moveInBoard(moveString)) return false;
+		if(!checkFigur(move, boardArr , player)) return false;
 		return true;
 	}
 
@@ -294,6 +295,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int translatedMove[] = new int[4];
 		char[] move = moveString.toCharArray();
 		// invert the column 
+		// move = {zeile1, spalte1, zeile2, spalte2}
 		translatedMove[0] = 9 - Character.getNumericValue(move[1]);
 		translatedMove[1] = spalteMove(move[0]);
 		translatedMove[2] = 9 - Character.getNumericValue(move[4]);
@@ -413,7 +415,8 @@ public class XiangqiGame extends Game implements Serializable{
 		return validMoves(player, FENtoBoard(getBoard()));
 	}
 
-	public boolean checkFigur(int[] translatedMove, char[][] board, char figur, Player player){
+	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
+		char figur = board[translatedMove[0]][translatedMove[1]];
 		switch (figur) {
 			case 'G':
 			case 'g':
