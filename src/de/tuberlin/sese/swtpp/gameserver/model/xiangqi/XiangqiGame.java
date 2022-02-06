@@ -381,10 +381,27 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 	
+	public ArrayList<String> validMoves(Player player,char[][] board, String[] figuren) {
+		String validSpalte = "abcdefghij";
+		ArrayList<String> moveList = new ArrayList<String>();
+		int counter = figuren.length;
+		
+		for(int n=0;n<counter;n++) {
+			for(int i=0;i<10;i++) {
+				for(int j=0;j<9;j++) {
+					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
+					String moveString=figuren[n]+"-"+moveTo;
+					if (checkMove(moveString, player)) moveList.add(moveString);
+				}
+			}
+		}
+		
+		return moveList;
+	}
+	
 	public ArrayList<String> validMoves(Player player, char[][] board) {
 		String figuren[]= new String[16];
 		String validSpalte = "abcdefghij";
-		ArrayList<String> moveList = new ArrayList<String>();
 		int counter = 0;
 		boolean isRedPlayer = player == redPlayer;
 		
@@ -398,17 +415,7 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 		}
 		
-		for(int n=0;n<counter;n++) {
-			for(int i=0;i<10;i++) {
-				for(int j=0;j<9;j++) {
-					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
-					String moveString=figuren[n]+"-"+moveTo;
-					if (checkMove(moveString, player)) moveList.add(moveString);
-				}
-			}
-		}
-		
-		return moveList;
+		return validMoves(player, board, figuren);
 	}
 	
 	public ArrayList<String> validMoves(Player player) {
@@ -440,7 +447,7 @@ public class XiangqiGame extends Game implements Serializable{
 				break;
 			case 'R':
 			case 'r':
-				if (!checkRook(board, translatedMove, player))
+				if (!checkRook(board, translatedMove))
 					return false;
 				break;
 			case 'C':
@@ -465,8 +472,8 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		String palastSpalte = "345";
-		String palastZeileRot = "012";
-		String palastZeileSchwarz = "789";
+		String palastZeileRot = "789";
+		String palastZeileSchwarz = "012";
 		//move within palace?
 		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastSpalte.contains(String.valueOf(spalteMove2))){
 			return false;
@@ -477,7 +484,7 @@ public class XiangqiGame extends Game implements Serializable{
 		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(zeileMove1)) || !palastZeileSchwarz.contains(String.valueOf(zeileMove2)))){
 			return false;
 		}
-		if(Math.abs(zeileMove1 - zeileMove2) > 1 || Math.abs(spalteMove1 - spalteMove2) > 1)
+		if(Math.abs(zeileMove1 - zeileMove2) + Math.abs(spalteMove1 - spalteMove2) != 1)
 			return false; //move one space?
 
 		return true;
@@ -489,8 +496,8 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		String palastSpalte = "345";
-		String palastZeileRot = "012";
-		String palastZeileSchwarz = "789";
+		String palastZeileRot = "789";
+		String palastZeileSchwarz = "012";
 		//move within palace?
 		if(!palastSpalte.contains(String.valueOf(spalteMove1)) || !palastSpalte.contains(String.valueOf(spalteMove2))){
 			return false;
@@ -501,7 +508,6 @@ public class XiangqiGame extends Game implements Serializable{
 		if(player == this.blackPlayer && (!palastZeileSchwarz.contains(String.valueOf(zeileMove1)) || !palastZeileSchwarz.contains(String.valueOf(zeileMove2)))){
 			return false;
 		}
-		
 		if (Math.abs(spalteMove1 - spalteMove2) != 1 || Math.abs(zeileMove1 - zeileMove2) != 1)
 			return false;
 
@@ -537,14 +543,14 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		
-		if(spalteMove2-spalteMove1==-2) {
-			if(Character.isAlphabetic(board[zeileMove1][spalteMove1-1])) return false;
-		} else if(zeileMove2-zeileMove1==2) {
-			if(Character.isAlphabetic(board[zeileMove1+1][spalteMove1])) return false;
+		if(zeileMove2-zeileMove1==-2) {
+			if(Character.isAlphabetic(board[zeileMove1-1][spalteMove1])) return false;
 		} else if(spalteMove2-spalteMove1==2) {
 			if(Character.isAlphabetic(board[zeileMove1][spalteMove1+1])) return false;
-		} else if(zeileMove2-zeileMove1==-2) {
-			if(Character.isAlphabetic(board[zeileMove1-1][spalteMove1])) return false;
+		} else if(zeileMove2-zeileMove1==2) {
+			if(Character.isAlphabetic(board[zeileMove1+1][spalteMove1])) return false;
+		} else if(spalteMove2-spalteMove1==-2) {
+			if(Character.isAlphabetic(board[zeileMove1][spalteMove1-1])) return false;
 		}
 		
 		if ((Math.abs(zeileMove1- zeileMove2) == 1 && Math.abs(spalteMove1 - spalteMove2) == 2)
@@ -555,7 +561,9 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 	}
 
-	public boolean checkRook(char[][] board, int[] translatedMove, Player player){
+	public boolean checkRook(char[][] board, int[] translatedMove){
+		// can only move either vertical or horizontal
+		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) return false;
 		if(!checkRookVertical(board, translatedMove))
 			return false;
 		if(!checkRookHorizontal(board, translatedMove))
@@ -614,19 +622,19 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkCannon(char[][] board, int[] translatedMove){
-		int zeileMove1 = translatedMove[0];
-		int spalteMove1 = translatedMove[1];
-		int zeileMove2 = translatedMove[2];
-		int spalteMove2 = translatedMove[3];
-		char startFigur = board[zeileMove1][spalteMove1];
-		char zielFigur = board[zeileMove2][spalteMove2];
-		if((Character.isUpperCase(startFigur) && Character.isLowerCase(zielFigur))
-		|| (Character.isLowerCase(startFigur) && Character.isUpperCase(zielFigur))){
-			if(!checkCannonTake(board, translatedMove))
+		char startFigur = board[translatedMove[0]][translatedMove[1]];
+		char zielFigur = board[translatedMove[2]][translatedMove[3]];
+		
+		// can only move either vertical or horizontal
+		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) return false;
+		
+		if(!Character.isAlphabetic(zielFigur)) {
+			if(!checkCannonMove(board, translatedMove))
 				return false;
 		}
-		else{
-			if(!checkCannonMove(board, translatedMove))
+		else if((Character.isUpperCase(startFigur) && Character.isLowerCase(zielFigur))
+		|| (Character.isLowerCase(startFigur) && Character.isUpperCase(zielFigur))){
+			if(!checkCannonTake(board, translatedMove))
 				return false;
 		}
 		return true;
@@ -647,7 +655,8 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		
-		if(Math.abs(spalteMove1 - spalteMove2) + Math.abs(zeileMove1 - zeileMove2) != 1)
+		// sonderfall
+		if(Math.abs(spalteMove1 - spalteMove2) + Math.abs(zeileMove1 - zeileMove2) == 1)
 			return false;
 		if(!checkCannonTakeVertical(board, translatedMove))
 			return false;
@@ -675,13 +684,13 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		//check below
 		else if (zeileMove1 - zeileMove2 < 1) {
-			int steps = zeileMove1 - zeileMove2;
+			int steps = Math.abs(zeileMove1 - zeileMove2);
 			int counter = 0;
 			for (int i = 1; i < steps; i++) {
 				if (Character.isAlphabetic(board[zeileMove1 + i][spalteMove1]))
 					counter = counter + 1;
 			}
-			if(counter != 1)
+			if(counter != 1 && zeileMove1 - zeileMove2 !=0)
 				return false;
 		}
 		return true;
@@ -690,7 +699,7 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkCannonTakeHorizontal(char[][] board, int[] translatedMove){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
-		//int zeileMove2 = translatedMove[2];
+//		int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		//check above
 		if (spalteMove1 - spalteMove2 > 1) {
@@ -705,13 +714,13 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		//check below
 		else if (spalteMove1 - spalteMove2 < 1) {
-			int steps = spalteMove1 - spalteMove2;
+			int steps = Math.abs(spalteMove1 - spalteMove2);
 			int counter = 0;
 			for (int i = 1; i < steps; i++) {
 				if (Character.isAlphabetic(board[zeileMove1][spalteMove1 + i]))
 					counter = counter + 1;
 			}
-			if(counter != 1)
+			if(counter != 1 && spalteMove1 - spalteMove2 !=0)
 				return false;
 		}
 		return true;
@@ -722,8 +731,7 @@ public class XiangqiGame extends Game implements Serializable{
 		if(player == this.redPlayer)
 			if(!checkSoldierRed(translatedMove, player)) 
 				return false;
-
-		if(player == this.blackPlayer)
+		else if(player == this.blackPlayer)
 			if(!checkSoldierBlack(translatedMove, player)) 
 				return false;
 
@@ -733,31 +741,27 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkSoldierRed(int[] translatedMove, Player player){
 		String redZeile = "56789";
 		//soldier can only move forward
-		if((translatedMove[1] - translatedMove[3]) == 1 && translatedMove[0] - translatedMove[2] == 0)
-				return true;
+		if((translatedMove[0] - translatedMove[2]) != 1 || translatedMove[3] - translatedMove[1] != 0)
+				return false;
 		//if in enemy territory, soldier can move one step left or right
-		if(!redZeile.contains(String.valueOf(translatedMove[1]))){
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
-				return true;
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
-				return true;
+		if(!redZeile.contains(String.valueOf(translatedMove[0]))){
+			if((translatedMove[0] - translatedMove[2]) != 0 || Math.abs(translatedMove[3] - translatedMove[1]) != 1)
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	public boolean checkSoldierBlack(int[] translatedMove, Player player){
 		String blackZeile = "01234";
 		//soldier can only move forward
-		if((translatedMove[1] - translatedMove[3]) == -1 && translatedMove[0] - translatedMove[2] == 0)
-				return true;
+		if((translatedMove[0] - translatedMove[2]) != -1 && translatedMove[3] - translatedMove[1] != 0)
+				return false;
 		//if in enemy territory, soldier can move one step left or right
-		if(!blackZeile.contains(String.valueOf(translatedMove[1]))){
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == 1)
-				return true;
-			if((translatedMove[1] - translatedMove[3]) == 0 && translatedMove[0] - translatedMove[2] == -1)
-				return true;
+		if(!blackZeile.contains(String.valueOf(translatedMove[0]))){
+			if((translatedMove[0] - translatedMove[2]) != 0 || Math.abs(translatedMove[3] - translatedMove[1]) != 1)
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 
