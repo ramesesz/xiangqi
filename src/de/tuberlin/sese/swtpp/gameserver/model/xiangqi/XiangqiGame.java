@@ -530,7 +530,7 @@ public class XiangqiGame extends Game implements Serializable{
 
 		return true;
 	}
-	//index translated move fixed until here
+
 	public boolean checkHorse(char[][] board, int[] translatedMove){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
@@ -538,13 +538,13 @@ public class XiangqiGame extends Game implements Serializable{
 		int spalteMove2 = translatedMove[3];
 		
 		if(spalteMove2-spalteMove1==-2) {
-			if(Character.isAlphabetic(board[spalteMove1-1][zeileMove1])) return false;
+			if(Character.isAlphabetic(board[zeileMove1][spalteMove1-1])) return false;
 		} else if(zeileMove2-zeileMove1==2) {
-			if(Character.isAlphabetic(board[spalteMove1][zeileMove1+1])) return false;
+			if(Character.isAlphabetic(board[zeileMove1+1][spalteMove1])) return false;
 		} else if(spalteMove2-spalteMove1==2) {
-			if(Character.isAlphabetic(board[spalteMove1+1][zeileMove1])) return false;
+			if(Character.isAlphabetic(board[zeileMove1][spalteMove1+1])) return false;
 		} else if(zeileMove2-zeileMove1==-2) {
-			if(Character.isAlphabetic(board[spalteMove1][zeileMove1-1])) return false;
+			if(Character.isAlphabetic(board[zeileMove1-1][spalteMove1])) return false;
 		}
 		
 		if ((Math.abs(zeileMove1- zeileMove2) == 1 && Math.abs(spalteMove1 - spalteMove2) == 2)
@@ -564,10 +564,10 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkRookVertical(char[][] board, int[] translatedMove){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		//int spalteMove2 = translatedMove[2];
-		int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		//int spalteMove2 = translatedMove[3];
 		
 		//check above
 		if (zeileMove1 - zeileMove2 > 1) {
@@ -589,10 +589,10 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkRookHorizontal(char[][] board, int[] translatedMove){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
-		//int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		//int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		
 		//check left
 		if (spalteMove1 - spalteMove2 > 1) {
@@ -614,8 +614,12 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkCannon(char[][] board, int[] translatedMove){
-		char startFigur = board[translatedMove[0]][translatedMove[1]];
-		char zielFigur = board[translatedMove[2]][translatedMove[3]];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
+		char startFigur = board[zeileMove1][spalteMove1];
+		char zielFigur = board[zeileMove2][spalteMove2];
 		if((Character.isUpperCase(startFigur) && Character.isLowerCase(zielFigur))
 		|| (Character.isLowerCase(startFigur) && Character.isUpperCase(zielFigur))){
 			if(!checkCannonTake(board, translatedMove))
@@ -638,12 +642,12 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkCannonTake(char[][] board, int[] translatedMove){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
-		int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		
-		if(Math.abs(spalteMove1 - spalteMove2) + Math.abs(zeileMove1 - zeileMove2) == 1)
+		if(Math.abs(spalteMove1 - spalteMove2) + Math.abs(zeileMove1 - zeileMove2) != 1)
 			return false;
 		if(!checkCannonTakeVertical(board, translatedMove))
 			return false;
@@ -654,10 +658,10 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkCannonTakeVertical(char[][] board, int[] translatedMove){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		//int spalteMove2 = translatedMove[2];
-		int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		//int spalteMove2 = translatedMove[3];
 		//check above
 		if (zeileMove1 - zeileMove2 > 1) {
 			int steps = zeileMove1 - zeileMove2;
@@ -684,10 +688,10 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkCannonTakeHorizontal(char[][] board, int[] translatedMove){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
-		//int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		//int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		//check above
 		if (spalteMove1 - spalteMove2 > 1) {
 			int steps = spalteMove1 - spalteMove2;
