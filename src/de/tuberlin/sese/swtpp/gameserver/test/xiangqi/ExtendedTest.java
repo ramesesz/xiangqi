@@ -124,7 +124,7 @@ public class ExtendedTest {
     	// test basic movement(unchecked)
     	startGame(startFEN, true);
     	// ignore this text -> redNext is true because doMove only applies the move to the board and not add it to history or set the next player
-    	assertEquals(game.doMove("a0-a2", redPlayer),"rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/RC5C1/9/1HEAGAEHR");
+//    	assertEquals(game.doMove("a0-a2", redPlayer),"rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/RC5C1/9/1HEAGAEHR");
 //    	assertGameState("rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/RC5C1/9/1HEAGAEHR", true, false, false);
 //    	printBoard(game.getBoard());
     }
@@ -159,83 +159,7 @@ public class ExtendedTest {
     	assertFalse(game.startZielIsValid(board, game.getTranslatedMove("a0-a0"), blackPlayer));
     }
     
-    @Test
-    public void testValidMoves() {
-    	startGame(startFEN, false);
-    	ArrayList<String> moveList = game.validMoves(blackPlayer, game.FENtoBoard(game.getBoard()));
-    	
-    	for (String move: moveList) {
-    		System.out.println(move);
-    	}
-    }
-    
-//    @Test
-//    public void testValidMovesByFiguren() {
-//    	startGame(startFEN, false);
-//    	game.doMove("d9-e8", blackPlayer);
-//    	String[] figuren = {"e8"};
-//    	ArrayList<String> moveList = game.validMoves(blackPlayer, game.FENtoBoard(game.getBoard()), figuren);
-//    	ArrayList<String> expectedList = new ArrayList<String>();
-//    	expectedList.add("e8-d9");
-//    	expectedList.add("e8-d7");
-//    	expectedList.add("e8-f7");
-//    	
-//    	assertTrue(moveList.equals(expectedList));
-////    	for (String move: moveList) {
-////    		System.out.println(move);
-////    	}
-//    }
-//    
-//    @Test
-//    public void testCannonValidMoves() {
-//    	startGame(startFEN, true);
-//    	game.doMove("b2-b9", redPlayer);
-//    	String[] figuren = {"b9"};
-//    	ArrayList<String> moveList = game.validMoves(redPlayer, game.FENtoBoard(game.getBoard()), figuren);
-//    	ArrayList<String> expectedList = new ArrayList<String>();
-//    	expectedList.add("b9-d9");
-//    	expectedList.add("b9-b8");
-//
-//    	assertTrue(moveList.equals(expectedList));
-//    	System.out.println("blabla");
-//    	for (String move: moveList) {
-//    		System.out.println(move);
-//    	}
-//    }
-    
-//    @Test
-//    public void validMovesChecker() {
-//    	startGame(startFEN, false);
-//    	String[] figuren = {"a6"};
-//    	ArrayList<String> moveList = game.validMoves(blackPlayer, game.FENtoBoard(game.getBoard()), figuren);
-////    	System.out.println("valid moves for a0: ");
-////    	for (String moveString: moveList) {
-////    		int[] move = game.getTranslatedMove(moveString);
-////    		int[] pos = {move[2],move[3]};
-////    		setFigur(pos, 'Z');
-////    		System.out.println(move);
-////    	}
-////    	printBoard(startFEN);
-////    	System.out.println("--------------------");
-////    	printBoard();
-//    }
-    
-	@Test
-	public void testCheckMate() {
-		startGame("7R1/5g3/C2RH4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2",true);
-		String[] figuren = {"d7"};
-    	ArrayList<String> moveList = game.validMoves(redPlayer, game.FENtoBoard(game.getBoard()), figuren);
-//    	for (String moveString: moveList) {
-//    		int[] move = game.getTranslatedMove(moveString);
-//    		int[] pos = {move[2],move[3]};
-//    		setFigur(pos, 'Z');
-//    		System.out.println(move);
-//    	}
-		assertMove("d7-d8", true, true);
-//		printBoard();
-//		assertGameState("7R1/3R1g3/C3H4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2", false, false, true);
-	}
-    
+
     // functions : 
 //    tryMove -> implement in TryMoveIntegrationTest
 //    doMove -> DONE

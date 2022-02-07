@@ -223,11 +223,12 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean tryMove(String moveString, Player player) {
 		// TODO: implement
 		// Verlauf: check if move is valid -> do the move (modify board) -> set next player -> add to history -> check if someone won
-		// cheeck if move is valid
+		// check if move is valid
 		if(!checkMove(moveString, player)) return false;
 		// do the move
 		String newBoard = doMove(moveString, player);
 		if(newBoard=="") return false;
+		if(getGeneralCoordinate(player)=="" || getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
 		else setBoard(newBoard);
 		// set next player
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
@@ -242,9 +243,9 @@ public class XiangqiGame extends Game implements Serializable{
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
-		char zielFigur = board[move[2]][move[3]];
+		// char zielFigur = board[move[2]][move[3]];
 		// You can't directly kill the general
-		if (Character.toLowerCase(zielFigur)=='g') return "";
+//		if (Character.toLowerCase(zielFigur)=='g') return "";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
 		// check if player is still checked
@@ -255,10 +256,10 @@ public class XiangqiGame extends Game implements Serializable{
 	
 
 	public boolean checkMove(String moveString, Player player){
+		if(!moveInBoard(moveString)) return false;
 		char[][] boardArr = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		if(!startZielIsValid(boardArr, move, player)) return false;
-		if(!moveInBoard(moveString)) return false;
 		if(!checkFigur(move, boardArr , player)) return false;
 		return true;
 	}
@@ -289,11 +290,13 @@ public class XiangqiGame extends Game implements Serializable{
 		//checks whether move is within board limits
 		String validZeile = "0123456789";
 		String validSpalte = "abcdefghij";
-
+		
 		char[] move = moveString.toCharArray();
 		
+		if(moveString.length() !=5 || move[2] != '-') return false;
+		
 		if(!validSpalte.contains(String.valueOf(move[0])) || !validZeile.contains(String.valueOf(move[1])) 
-		|| !validSpalte.contains(String.valueOf(move[3])) || !validZeile.contains(String.valueOf(move[4])) || move[2] != '-') return false;
+		|| !validSpalte.contains(String.valueOf(move[3])) || !validZeile.contains(String.valueOf(move[4]))) return false;
 
 		return true;
 	}
@@ -389,10 +392,10 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 	
-	public ArrayList<String> validMoves(Player player, char[][] board, String[] figuren) {
+	public ArrayList<String> validMoves(Player player, char[][] board, String[] figuren, int count) {
 		String validSpalte = "abcdefghij";
 		ArrayList<String> moveList = new ArrayList<String>();
-		int counter = figuren.length;
+		int counter = count;
 		
 		for(int n=0;n<counter;n++) {
 			for(int i=0;i<10;i++) {
@@ -423,7 +426,7 @@ public class XiangqiGame extends Game implements Serializable{
 			}
 		}
 		
-		return validMoves(player, board, figuren);
+		return validMoves(player, board, figuren, counter);
 	}
 	
 	public ArrayList<String> validMoves(Player player) {
@@ -450,10 +453,12 @@ public class XiangqiGame extends Game implements Serializable{
 
 	public boolean isCheck(Player player, char[][] board) {
 		String kingCoordinate = getGeneralCoordinate(player, board);
+		if(kingCoordinate=="") return true; 
 		String[] figuren = new String[16];
 		String validSpalte = "abcdefghij";
 		int counter = 0;
-		boolean isRedPlayer = player == redPlayer;
+		boolean isRedPlayer = player != redPlayer;
+		Player oppositePlayer = player == redPlayer ? blackPlayer : redPlayer;
 		
 		for(int i=0;i<10;i++) {
 			for(int j=0;j<9;j++) {
@@ -466,9 +471,13 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		
 		for(int n=0;n<counter;n++) {
-			if (checkMove(figuren[n]+"-"+kingCoordinate, player) && doMove(figuren[n]+"-"+kingCoordinate, player)!="") return true;
+			if (checkMove(figuren[n]+"-"+kingCoordinate, oppositePlayer) && doMove(figuren[n]+"-"+kingCoordinate, player)!="") return true;
 		}
 		return false;
+	}
+
+	public boolean isCheck(Player player) {
+		return isCheck(player, FENtoBoard(getBoard()));
 	}
 
 	public boolean isCheckmate(Player player, char[][] board) {
