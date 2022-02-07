@@ -437,7 +437,7 @@ public class XiangqiGame extends Game implements Serializable{
 				break;
 			case 'E':
 			case 'e':
-				if (!checkElephant(translatedMove, player))
+				if (!checkElephant(board, translatedMove, player))
 					return false;
 				break;
 			case 'H':
@@ -514,7 +514,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 
-	public boolean checkElephant(int[] translatedMove, Player player){
+	public boolean checkElephant(char board[][], int[] translatedMove, Player player){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
 		int zeileMove2 = translatedMove[2];
@@ -532,6 +532,12 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		//move 2 paces diagonally?
 		if (Math.abs(zeileMove1 - zeileMove2) != 2 || Math.abs(spalteMove1 - spalteMove2) != 2)
+			return false;
+		//is there intervening peice?
+		int interveneZeile = (zeileMove1 + zeileMove2)/2;
+		int interveneSpalte = (spalteMove1 + spalteMove2)/2;
+
+		if(Character.isAlphabetic(board[interveneZeile][interveneSpalte]))
 			return false;
 
 		return true;
