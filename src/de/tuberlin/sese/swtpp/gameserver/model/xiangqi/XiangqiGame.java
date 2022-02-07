@@ -735,7 +735,7 @@ public class XiangqiGame extends Game implements Serializable{
 		if(player == this.redPlayer)
 			if(!checkSoldierRed(translatedMove, player)) 
 				return false;
-		else if(player == this.blackPlayer)
+		if(player == this.blackPlayer)
 			if(!checkSoldierBlack(translatedMove, player)) 
 				return false;
 
@@ -776,7 +776,7 @@ public class XiangqiGame extends Game implements Serializable{
 		//if in own territory
 		if(blackZeile.contains(String.valueOf(zeileMove1))){
 			//soldier can only move forward 1 step
-			if((zeileMove1 - zeileMove2) != -1)
+			if((zeileMove2 - zeileMove1) != 1)
 				return false;
 		}
 		//if in enemy territory
@@ -785,7 +785,7 @@ public class XiangqiGame extends Game implements Serializable{
 			if(Math.abs(zeileMove1 - zeileMove2) + Math.abs(spalteMove1 - spalteMove2) != 1)
 				return false; 
 			//cannot move backwards
-			if((zeileMove1 - zeileMove2) == 11)
+			if((zeileMove1 - zeileMove2) == 1)
 				return false;
 		}
 		return true;
