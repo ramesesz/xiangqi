@@ -593,7 +593,7 @@ public class XiangqiGame extends Game implements Serializable{
 
 		return true;
 	}
-	
+
 	public boolean checkHorse(char[][] board, int[] translatedMove){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
@@ -632,7 +632,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
 		int zeileMove2 = translatedMove[2];
-//		int spalteMove2 = translatedMove[3];
+		//int spalteMove2 = translatedMove[3];
 		
 		//check above
 		if (zeileMove1 - zeileMove2 > 1) {
@@ -656,7 +656,7 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkRookHorizontal(char[][] board, int[] translatedMove){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
-//		int zeileMove2 = translatedMove[2];
+		//int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		
 		//check left
@@ -727,7 +727,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
 		int zeileMove2 = translatedMove[2];
-//		int spalteMove2 = translatedMove[3];
+		//int spalteMove2 = translatedMove[3];
 		//check above
 		if (zeileMove1 - zeileMove2 > 1) {
 			int steps = zeileMove1 - zeileMove2;
