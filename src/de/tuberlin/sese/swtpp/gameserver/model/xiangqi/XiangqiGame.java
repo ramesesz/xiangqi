@@ -223,26 +223,34 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean tryMove(String moveString, Player player) {
 		// TODO: implement
 		// Verlauf: check if move is valid -> do the move (modify board) -> set next player -> add to history -> check if someone won
+		// cheeck if move is valid
 		if(!checkMove(moveString, player)) return false;
-		if(!doMove(moveString)) return false;
+		// do the move
+		String newBoard = doMove(moveString, player);
+		if(newBoard=="") return false;
+		else setBoard(newBoard);
+		// set next player
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
+		// add to history
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
+		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, FENtoBoard(newBoard))) regularGameEnd(player);
 		return true;
 	}
 	
-	public boolean doMove(String moveString) {
+	public String doMove(String moveString, Player player) {
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
 		char zielFigur = board[move[2]][move[3]];
 		// You can't directly kill the general
-		if (Character.toLowerCase(zielFigur)=='g') return false;
+		if (Character.toLowerCase(zielFigur)=='g') return "";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
+		// check if player is still checked
+		if(isCheck(player,board)) return "";
 		String newBoard = boardToFEN(board);
-		setBoard(newBoard);
-		return true;
+		return newBoard;
 	}
 	
 
@@ -256,21 +264,21 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean startZielIsValid(char[][] board, int[] translatedMove, Player player){
-		int spalteMove1 = translatedMove[0];
-		int zeileMove1 = translatedMove[1];
-		int spalteMove2 = translatedMove[2];
-		int zeileMove2 = translatedMove[3];
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		//same start and destination?
 		if(spalteMove1 == spalteMove2 && zeileMove1 == zeileMove2) 
 			return false;
 		//piece to be moved belongs to enemy?
-		if(!Character.isAlphabetic(board[spalteMove1][zeileMove1]) 
-		|| player == this.redPlayer && Character.isLowerCase(board[spalteMove1][zeileMove1]) 
-		|| player == this.blackPlayer && Character.isUpperCase(board[spalteMove1][zeileMove1])) 
+		if(!Character.isAlphabetic(board[zeileMove1][spalteMove1]) 
+		|| player == this.redPlayer && Character.isLowerCase(board[zeileMove1][spalteMove1]) 
+		|| player == this.blackPlayer && Character.isUpperCase(board[zeileMove1][spalteMove1])) 
 			return false;
 		//piece at dest belongs to player?
-		if(player == this.redPlayer && Character.isUpperCase(board[spalteMove2][zeileMove2])
-		|| player == this.blackPlayer && Character.isLowerCase(board[spalteMove2][zeileMove2]))
+		if(player == this.redPlayer && Character.isUpperCase(board[zeileMove2][spalteMove2])
+		|| player == this.blackPlayer && Character.isLowerCase(board[zeileMove2][spalteMove2]))
 			return false;
 
 		return true;
@@ -381,7 +389,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return state;
 	}
 	
-	public ArrayList<String> validMoves(Player player,char[][] board, String[] figuren) {
+	public ArrayList<String> validMoves(Player player, char[][] board, String[] figuren) {
 		String validSpalte = "abcdefghij";
 		ArrayList<String> moveList = new ArrayList<String>();
 		int counter = figuren.length;
@@ -391,7 +399,7 @@ public class XiangqiGame extends Game implements Serializable{
 				for(int j=0;j<9;j++) {
 					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
 					String moveString=figuren[n]+"-"+moveTo;
-					if (checkMove(moveString, player)) moveList.add(moveString);
+					if (checkMove(moveString, player) && doMove(moveString, player)!="") moveList.add(moveString);
 				}
 			}
 		}
@@ -420,6 +428,55 @@ public class XiangqiGame extends Game implements Serializable{
 	
 	public ArrayList<String> validMoves(Player player) {
 		return validMoves(player, FENtoBoard(getBoard()));
+	}
+	
+	public String getGeneralCoordinate(Player player, char[][] board) {
+		String validSpalte = "abcdefghij";
+		boolean isRedPlayer = player == redPlayer;
+		for(int i=0;i<10;i++) {
+			for(int j=0;j<9;j++) {
+				char figur = board[i][j];
+				if((isRedPlayer && figur == 'G') || (!isRedPlayer && figur == 'g')) {
+					return validSpalte.charAt(j)+Integer.toString(9-i);
+				}
+			}
+		}
+		return "";
+	}
+
+	public String getGeneralCoordinate(Player player) {
+		return getGeneralCoordinate(player, FENtoBoard(getBoard()));
+	}
+
+	public boolean isCheck(Player player, char[][] board) {
+		String kingCoordinate = getGeneralCoordinate(player, board);
+		String[] figuren = new String[16];
+		String validSpalte = "abcdefghij";
+		int counter = 0;
+		boolean isRedPlayer = player == redPlayer;
+		
+		for(int i=0;i<10;i++) {
+			for(int j=0;j<9;j++) {
+				char figur = board[i][j];
+				if((isRedPlayer && Character.isUpperCase(figur)) || (!isRedPlayer && Character.isLowerCase(figur))) {
+					figuren[counter]=validSpalte.charAt(j)+Integer.toString(9-i);
+					counter++;
+				}
+			}
+		}
+		
+		for(int n=0;n<counter;n++) {
+			if (checkMove(figuren[n]+"-"+kingCoordinate, player) && doMove(figuren[n]+"-"+kingCoordinate, player)!="") return true;
+		}
+		return false;
+	}
+
+	public boolean isCheckmate(Player player, char[][] board) {
+		if (isCheck(player, board)) {
+			ArrayList<String> validMoves = validMoves(player, board);
+			if (validMoves.size() == 0) return true;
+		}
+		return false;
 	}
 
 	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
@@ -728,10 +785,10 @@ public class XiangqiGame extends Game implements Serializable{
 
 	public boolean checkSoldier(int[] translatedMove, Player player){
 		
-		if(player == this.redPlayer)
+		if(player == redPlayer)
 			if(!checkSoldierRed(translatedMove, player)) 
 				return false;
-		else if(player == this.blackPlayer)
+		if(player == blackPlayer)
 			if(!checkSoldierBlack(translatedMove, player)) 
 				return false;
 
@@ -754,7 +811,7 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkSoldierBlack(int[] translatedMove, Player player){
 		String blackZeile = "01234";
 		//soldier can only move forward
-		if((translatedMove[0] - translatedMove[2]) != -1 && translatedMove[3] - translatedMove[1] != 0)
+		if((translatedMove[0] - translatedMove[2]) != -1 || translatedMove[3] - translatedMove[1] != 0)
 				return false;
 		//if in enemy territory, soldier can move one step left or right
 		if(!blackZeile.contains(String.valueOf(translatedMove[0]))){
