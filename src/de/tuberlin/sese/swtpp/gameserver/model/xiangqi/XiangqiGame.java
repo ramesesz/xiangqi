@@ -494,7 +494,7 @@ public class XiangqiGame extends Game implements Serializable{
 				break;
 			case 'E':
 			case 'e':
-				if (!checkElephant(translatedMove, player))
+				if (!checkElephant(board, translatedMove, player))
 					return false;
 				break;
 			case 'H':
@@ -571,7 +571,7 @@ public class XiangqiGame extends Game implements Serializable{
 		return true;
 	}
 
-	public boolean checkElephant(int[] translatedMove, Player player){
+	public boolean checkElephant(char board[][], int[] translatedMove, Player player){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
 		int zeileMove2 = translatedMove[2];
@@ -589,6 +589,12 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		//move 2 paces diagonally?
 		if (Math.abs(zeileMove1 - zeileMove2) != 2 || Math.abs(spalteMove1 - spalteMove2) != 2)
+			return false;
+		//is there intervening peice?
+		int interveneZeile = (zeileMove1 + zeileMove2)/2;
+		int interveneSpalte = (spalteMove1 + spalteMove2)/2;
+
+		if(Character.isAlphabetic(board[interveneZeile][interveneSpalte]))
 			return false;
 
 		return true;
@@ -620,7 +626,8 @@ public class XiangqiGame extends Game implements Serializable{
 
 	public boolean checkRook(char[][] board, int[] translatedMove){
 		// can only move either vertical or horizontal
-		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) return false;
+		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) 
+			return false;
 		if(!checkRookVertical(board, translatedMove))
 			return false;
 		if(!checkRookHorizontal(board, translatedMove))
@@ -683,7 +690,8 @@ public class XiangqiGame extends Game implements Serializable{
 		char zielFigur = board[translatedMove[2]][translatedMove[3]];
 		
 		// can only move either vertical or horizontal
-		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) return false;
+		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) 
+			return false;
 		
 		if(!Character.isAlphabetic(zielFigur)) {
 			if(!checkCannonMove(board, translatedMove))
@@ -756,7 +764,7 @@ public class XiangqiGame extends Game implements Serializable{
 	public boolean checkCannonTakeHorizontal(char[][] board, int[] translatedMove){
 		int zeileMove1 = translatedMove[0];
 		int spalteMove1 = translatedMove[1];
-//		int zeileMove2 = translatedMove[2];
+		//int zeileMove2 = translatedMove[2];
 		int spalteMove2 = translatedMove[3];
 		//check above
 		if (spalteMove1 - spalteMove2 > 1) {
@@ -784,11 +792,13 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkSoldier(int[] translatedMove, Player player){
-		
-		if(player == redPlayer)
+		//can only move vertical or horizontal
+		if(translatedMove[2]-translatedMove[0] !=0 && translatedMove[3]-translatedMove[1] !=0) 
+			return false;
+		if(player == this.redPlayer)
 			if(!checkSoldierRed(translatedMove, player)) 
 				return false;
-		if(player == blackPlayer)
+		if(player == this.blackPlayer)
 			if(!checkSoldierBlack(translatedMove, player)) 
 				return false;
 
@@ -796,26 +806,49 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean checkSoldierRed(int[] translatedMove, Player player){
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		String redZeile = "56789";
-		//soldier can only move forward
-		if((translatedMove[0] - translatedMove[2]) != 1 || translatedMove[3] - translatedMove[1] != 0)
+		
+		//if in own territory
+		if(redZeile.contains(String.valueOf(zeileMove1))){
+			//soldier can only move forward 1 step
+			if((zeileMove1 - zeileMove2) != 1)
 				return false;
-		//if in enemy territory, soldier can move one step left or right
-		if(!redZeile.contains(String.valueOf(translatedMove[0]))){
-			if((translatedMove[0] - translatedMove[2]) != 0 || Math.abs(translatedMove[3] - translatedMove[1]) != 1)
+		}
+		//if in enemy territory
+		else{
+			//move exactly one space
+			if(Math.abs(zeileMove1 - zeileMove2) + Math.abs(spalteMove1 - spalteMove2) != 1)
+				return false; 
+			//cannot move backwards
+			if((zeileMove1 - zeileMove2) == -1)
 				return false;
 		}
 		return true;
 	}
 
 	public boolean checkSoldierBlack(int[] translatedMove, Player player){
+		int zeileMove1 = translatedMove[0];
+		int spalteMove1 = translatedMove[1];
+		int zeileMove2 = translatedMove[2];
+		int spalteMove2 = translatedMove[3];
 		String blackZeile = "01234";
-		//soldier can only move forward
-		if((translatedMove[0] - translatedMove[2]) != -1 || translatedMove[3] - translatedMove[1] != 0)
+		//if in own territory
+		if(blackZeile.contains(String.valueOf(zeileMove1))){
+			//soldier can only move forward 1 step
+			if((zeileMove2 - zeileMove1) != 1)
 				return false;
-		//if in enemy territory, soldier can move one step left or right
-		if(!blackZeile.contains(String.valueOf(translatedMove[0]))){
-			if((translatedMove[0] - translatedMove[2]) != 0 || Math.abs(translatedMove[3] - translatedMove[1]) != 1)
+		}
+		//if in enemy territory
+		else{
+			//move exactly one space
+			if(Math.abs(zeileMove1 - zeileMove2) + Math.abs(spalteMove1 - spalteMove2) != 1)
+				return false; 
+			//cannot move backwards
+			if((zeileMove1 - zeileMove2) == 1)
 				return false;
 		}
 		return true;
