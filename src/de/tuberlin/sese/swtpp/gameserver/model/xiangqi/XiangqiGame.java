@@ -439,6 +439,13 @@ public class XiangqiGame extends Game implements Serializable{
 		return validMoves(player, FENtoBoard(getBoard()));
 	}
 	
+	public boolean isTodesBlick(){
+		char[] redCoordinate = getGeneralCoordinate(this.redPlayer).toCharArray();
+		char[] blackCoordinate = getGeneralCoordinate(this.blackPlayer).toCharArray();
+
+		return false;
+	}
+	
 	public String getGeneralCoordinate(Player player, char[][] board) {
 		String validSpalte = "abcdefghij";
 		boolean isRedPlayer = player == redPlayer;
