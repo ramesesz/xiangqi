@@ -228,15 +228,16 @@ public class XiangqiGame extends Game implements Serializable{
 		// do the move
 		String newBoard = doMove(moveString, player);
 		if(newBoard=="") return false;
-		if(getGeneralCoordinate(player)=="" || getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
+		if(getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
+		// check if player is still checked
+		if(isCheck(player,newBoard)) return false;
 		else setBoard(newBoard);
 		// set next player
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
 		// add to history
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
-		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, FENtoBoard(newBoard))) regularGameEnd(player);
-		return true;
+		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, newBoard)) regularGameEnd(player);		return true;
 	}
 	
 	public String doMove(String moveString, Player player) {
@@ -248,8 +249,6 @@ public class XiangqiGame extends Game implements Serializable{
 //		if (Character.toLowerCase(zielFigur)=='g') return "";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
-		// check if player is still checked
-		if(isCheck(player,board)) return "";
 		String newBoard = boardToFEN(board);
 		return newBoard;
 	}
@@ -402,7 +401,11 @@ public class XiangqiGame extends Game implements Serializable{
 				for(int j=0;j<9;j++) {
 					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
 					String moveString=figuren[n]+"-"+moveTo;
-					if (checkMove(moveString, player) && doMove(moveString, player)!="") moveList.add(moveString);
+					if (checkMove(moveString, player)) {
+						String newBoard = doMove(moveString, player);
+						if(newBoard=="") continue;
+						if(!isCheck(player, newBoard)) moveList.add(moveString);
+					} 
 				}
 			}
 		}
@@ -447,23 +450,26 @@ public class XiangqiGame extends Game implements Serializable{
 		return "";
 	}
 
+	public String getGeneralCoordinate(Player player, String board) {
+		return getGeneralCoordinate(player, FENtoBoard(board));
+	}
+
 	public String getGeneralCoordinate(Player player) {
 		return getGeneralCoordinate(player, FENtoBoard(getBoard()));
 	}
 
 	public boolean isCheck(Player player, char[][] board) {
-		String kingCoordinate = getGeneralCoordinate(player, board);
-		if(kingCoordinate=="") return true; 
+		String generalCoordinate = getGeneralCoordinate(player, board);
 		String[] figuren = new String[16];
 		String validSpalte = "abcdefghij";
 		int counter = 0;
-		boolean isRedPlayer = player != redPlayer;
+		boolean isRedPlayer = player == redPlayer;
 		Player oppositePlayer = player == redPlayer ? blackPlayer : redPlayer;
 		
 		for(int i=0;i<10;i++) {
 			for(int j=0;j<9;j++) {
 				char figur = board[i][j];
-				if((isRedPlayer && Character.isUpperCase(figur)) || (!isRedPlayer && Character.isLowerCase(figur))) {
+				if((!isRedPlayer && Character.isUpperCase(figur)) || (isRedPlayer && Character.isLowerCase(figur))) {
 					figuren[counter]=validSpalte.charAt(j)+Integer.toString(9-i);
 					counter++;
 				}
@@ -471,9 +477,18 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		
 		for(int n=0;n<counter;n++) {
-			if (checkMove(figuren[n]+"-"+kingCoordinate, oppositePlayer) && doMove(figuren[n]+"-"+kingCoordinate, player)!="") return true;
+			String moveString = figuren[n]+"-"+generalCoordinate;
+			if (checkMove(moveString, oppositePlayer)) {
+				String newBoard = doMove(moveString, oppositePlayer);
+				if(newBoard=="") continue;
+				if(!isCheck(oppositePlayer, newBoard)) return true;
+			}
 		}
 		return false;
+	}
+
+	public boolean isCheck(Player player, String board) {
+		return isCheck(player, FENtoBoard(board));
 	}
 
 	public boolean isCheck(Player player) {
@@ -486,6 +501,14 @@ public class XiangqiGame extends Game implements Serializable{
 			if (validMoves.size() == 0) return true;
 		}
 		return false;
+	}
+
+	public boolean isCheckmate(Player player, String board) {
+		return isCheckmate(player, FENtoBoard(board));
+	}
+
+	public boolean isCheckmate(Player player) {
+		return isCheckmate(player, FENtoBoard(getBoard()));
 	}
 
 	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
