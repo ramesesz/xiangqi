@@ -410,22 +410,13 @@ public class XiangqiGame extends Game implements Serializable{
 						if(!isCheck(player, newBoard))
 							moveList.add(moveString);
 					}
-					
-					
-					
-					
-//					String newBoard = doMove(moveString, player);
-//					if(newBoard=="") continue;
-//					if(newBoard=="cannot eat general") moveList.add(moveString);
-//					if (checkMove(moveString, player, boardToFEN(board))) {
-//						if(!isCheck(player, newBoard)) moveList.add(moveString);
-//					} 
 				}
 			}
 		}
 		
 		return moveList;
 	}
+	
 	
 	public ArrayList<String> validMoves(Player player, char[][] board) {
 		String figuren[]= new String[16];
