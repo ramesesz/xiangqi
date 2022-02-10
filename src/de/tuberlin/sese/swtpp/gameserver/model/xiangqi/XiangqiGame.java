@@ -228,40 +228,42 @@ public class XiangqiGame extends Game implements Serializable{
 		// do the move
 		String newBoard = doMove(moveString, player);
 		if(newBoard=="") return false;
-		if(getGeneralCoordinate(player)=="" || getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
+		if(getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
+		// check if player is still checked
+		if(isCheck(player,newBoard)) return false;
 		else setBoard(newBoard);
 		// set next player
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
 		// add to history
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
-		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, FENtoBoard(newBoard))) regularGameEnd(player);
-		return true;
+		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, newBoard)) regularGameEnd(player);		return true;
 	}
 	
 	public String doMove(String moveString, Player player) {
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
-		// char zielFigur = board[move[2]][move[3]];
+		char zielFigur = board[move[2]][move[3]];
 		// You can't directly kill the general
-//		if (Character.toLowerCase(zielFigur)=='g') return "";
+		//if (Character.toLowerCase(zielFigur)=='g') return "cannot eat general!";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
-		// check if player is still checked
-		if(isCheck(player,board)) return "";
 		String newBoard = boardToFEN(board);
 		return newBoard;
 	}
 	
-
-	public boolean checkMove(String moveString, Player player){
+	public boolean checkMove(String moveString, Player player, String board) {
 		if(!moveInBoard(moveString)) return false;
-		char[][] boardArr = FENtoBoard(getBoard());
+		char[][] boardArr = FENtoBoard(board);
 		int[] move = getTranslatedMove(moveString);
 		if(!startZielIsValid(boardArr, move, player)) return false;
 		if(!checkFigur(move, boardArr , player)) return false;
 		return true;
+	}
+
+	public boolean checkMove(String moveString, Player player){
+		return checkMove(moveString, player, getBoard());
 	}
 
 	public boolean startZielIsValid(char[][] board, int[] translatedMove, Player player){
@@ -402,7 +404,22 @@ public class XiangqiGame extends Game implements Serializable{
 				for(int j=0;j<9;j++) {
 					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
 					String moveString=figuren[n]+"-"+moveTo;
-					if (checkMove(moveString, player) && doMove(moveString, player)!="") moveList.add(moveString);
+					//get moveString
+					if(checkMove(moveString, player, boardToFEN(board))) {
+						String newBoard = doMove(moveString, player);
+						if(!isCheck(player, newBoard))
+							moveList.add(moveString);
+					}
+					
+					
+					
+					
+//					String newBoard = doMove(moveString, player);
+//					if(newBoard=="") continue;
+//					if(newBoard=="cannot eat general") moveList.add(moveString);
+//					if (checkMove(moveString, player, boardToFEN(board))) {
+//						if(!isCheck(player, newBoard)) moveList.add(moveString);
+//					} 
 				}
 			}
 		}
@@ -415,7 +432,7 @@ public class XiangqiGame extends Game implements Serializable{
 		String validSpalte = "abcdefghij";
 		int counter = 0;
 		boolean isRedPlayer = player == redPlayer;
-		
+		//sammeln figuren
 		for(int i=0;i<10;i++) {
 			for(int j=0;j<9;j++) {
 				char figur = board[i][j];
@@ -467,23 +484,26 @@ public class XiangqiGame extends Game implements Serializable{
 		return "";
 	}
 
+	public String getGeneralCoordinate(Player player, String board) {
+		return getGeneralCoordinate(player, FENtoBoard(board));
+	}
+
 	public String getGeneralCoordinate(Player player) {
 		return getGeneralCoordinate(player, FENtoBoard(getBoard()));
 	}
 
 	public boolean isCheck(Player player, char[][] board) {
-		String kingCoordinate = getGeneralCoordinate(player, board);
-		if(kingCoordinate=="") return true; 
+		String generalCoordinate = getGeneralCoordinate(player, board);
 		String[] figuren = new String[16];
 		String validSpalte = "abcdefghij";
 		int counter = 0;
-		boolean isRedPlayer = player != redPlayer;
+		boolean isRedPlayer = player == redPlayer;
 		Player oppositePlayer = player == redPlayer ? blackPlayer : redPlayer;
-		
+		//sammeln figuren
 		for(int i=0;i<10;i++) {
 			for(int j=0;j<9;j++) {
 				char figur = board[i][j];
-				if((isRedPlayer && Character.isUpperCase(figur)) || (!isRedPlayer && Character.isLowerCase(figur))) {
+				if((!isRedPlayer && Character.isUpperCase(figur)) || (isRedPlayer && Character.isLowerCase(figur))) {
 					figuren[counter]=validSpalte.charAt(j)+Integer.toString(9-i);
 					counter++;
 				}
@@ -491,9 +511,18 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		
 		for(int n=0;n<counter;n++) {
-			if (checkMove(figuren[n]+"-"+kingCoordinate, oppositePlayer) && doMove(figuren[n]+"-"+kingCoordinate, player)!="") return true;
+			String moveString = figuren[n]+"-"+generalCoordinate;
+//			String newBoard = doMove(moveString, oppositePlayer);
+//			if(newBoard=="cannot eat general") return true;
+			if (checkMove(moveString, oppositePlayer, boardToFEN(board))) {
+				return true;
+			}
 		}
 		return false;
+	}
+
+	public boolean isCheck(Player player, String board) {
+		return isCheck(player, FENtoBoard(board));
 	}
 
 	public boolean isCheck(Player player) {
@@ -506,6 +535,14 @@ public class XiangqiGame extends Game implements Serializable{
 			if (validMoves.size() == 0) return true;
 		}
 		return false;
+	}
+
+	public boolean isCheckmate(Player player, String board) {
+		return isCheckmate(player, FENtoBoard(board));
+	}
+
+	public boolean isCheckmate(Player player) {
+		return isCheckmate(player, FENtoBoard(getBoard()));
 	}
 
 	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
