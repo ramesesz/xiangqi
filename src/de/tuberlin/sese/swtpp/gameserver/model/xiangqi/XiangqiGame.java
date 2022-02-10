@@ -253,14 +253,17 @@ public class XiangqiGame extends Game implements Serializable{
 		return newBoard;
 	}
 	
-
-	public boolean checkMove(String moveString, Player player){
+	public boolean checkMove(String moveString, Player player, String board) {
 		if(!moveInBoard(moveString)) return false;
-		char[][] boardArr = FENtoBoard(getBoard());
+		char[][] boardArr = FENtoBoard(board);
 		int[] move = getTranslatedMove(moveString);
 		if(!startZielIsValid(boardArr, move, player)) return false;
 		if(!checkFigur(move, boardArr , player)) return false;
 		return true;
+	}
+
+	public boolean checkMove(String moveString, Player player){
+		return checkMove(moveString, player, getBoard());
 	}
 
 	public boolean startZielIsValid(char[][] board, int[] translatedMove, Player player){
@@ -401,9 +404,9 @@ public class XiangqiGame extends Game implements Serializable{
 				for(int j=0;j<9;j++) {
 					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
 					String moveString=figuren[n]+"-"+moveTo;
-					if (checkMove(moveString, player)) {
-						String newBoard = doMove(moveString, player);
-						if(newBoard=="") continue;
+					String newBoard = doMove(moveString, player);
+					if(newBoard=="") continue;
+					if (checkMove(moveString, player, newBoard)) {
 						if(!isCheck(player, newBoard)) moveList.add(moveString);
 					} 
 				}
@@ -478,9 +481,9 @@ public class XiangqiGame extends Game implements Serializable{
 		
 		for(int n=0;n<counter;n++) {
 			String moveString = figuren[n]+"-"+generalCoordinate;
-			if (checkMove(moveString, oppositePlayer)) {
-				String newBoard = doMove(moveString, oppositePlayer);
-				if(newBoard=="") continue;
+			String newBoard = doMove(moveString, oppositePlayer);
+			if(newBoard=="") continue;
+			if (checkMove(moveString, oppositePlayer, newBoard)) {
 				if(!isCheck(oppositePlayer, newBoard)) return true;
 			}
 		}

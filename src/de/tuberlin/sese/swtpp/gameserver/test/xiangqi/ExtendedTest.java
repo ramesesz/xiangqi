@@ -206,7 +206,7 @@ public class ExtendedTest {
     @Test
     public void testingg() {
 //    	String boardStr = "8R/R2g5/C8/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
-    	String boardStr = "R4g3/R8/R8/9/9/9/9/9/9/4G4";
+    	String boardStr = "4g4/R8/R8/9/9/9/9/9/9/4G4";
     	startGame(boardStr,true);
     	printBoard();
     	System.out.println(game.isCheck(blackPlayer, game.FENtoBoard(boardStr)));
