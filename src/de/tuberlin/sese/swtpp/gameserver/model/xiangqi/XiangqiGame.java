@@ -445,11 +445,24 @@ public class XiangqiGame extends Game implements Serializable{
 		return validMoves(player, FENtoBoard(getBoard()));
 	}
 	
-	public boolean isTodesBlick(){
-		char[] redCoordinate = getGeneralCoordinate(this.redPlayer).toCharArray();
-		char[] blackCoordinate = getGeneralCoordinate(this.blackPlayer).toCharArray();
+	public boolean isTodesBlick(char[][] board){
+		//z.b e0e9
+		char[] redBlackCoord = (getGeneralCoordinate(this.redPlayer) + getGeneralCoordinate(this.blackPlayer)).toCharArray();
+		int zeileMove1 = 9 - Character.getNumericValue(redBlackCoord[1]);
+		int spalteMove1 = spalteMove(redBlackCoord[0]);
+		int zeileMove2 = 9 - Character.getNumericValue(redBlackCoord[3]);
+		int spalteMove2 = spalteMove(redBlackCoord[2]);
 
-		return false;
+		//if in the same column
+		if(spalteMove1 == spalteMove2){
+			int steps = zeileMove1 - zeileMove2;
+			for (int i = 1; i < steps; i++) {
+				if (Character.isAlphabetic(board[zeileMove1 - i][spalteMove1]))
+					return false;
+			}
+		}
+
+		return true;
 	}
 	
 	public String getGeneralCoordinate(Player player, char[][] board) {
