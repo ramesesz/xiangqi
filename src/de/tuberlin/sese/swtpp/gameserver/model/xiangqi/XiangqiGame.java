@@ -244,9 +244,9 @@ public class XiangqiGame extends Game implements Serializable{
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
-		// char zielFigur = board[move[2]][move[3]];
+		char zielFigur = board[move[2]][move[3]];
 		// You can't directly kill the general
-//		if (Character.toLowerCase(zielFigur)=='g') return "";
+		//if (Character.toLowerCase(zielFigur)=='g') return "cannot eat general!";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
 		String newBoard = boardToFEN(board);
@@ -422,12 +422,13 @@ public class XiangqiGame extends Game implements Serializable{
 		return moveList;
 	}
 	
+	
 	public ArrayList<String> validMoves(Player player, char[][] board) {
 		String figuren[]= new String[16];
 		String validSpalte = "abcdefghij";
 		int counter = 0;
 		boolean isRedPlayer = player == redPlayer;
-		
+		//sammeln figuren
 		for(int i=0;i<10;i++) {
 			for(int j=0;j<9;j++) {
 				char figur = board[i][j];
