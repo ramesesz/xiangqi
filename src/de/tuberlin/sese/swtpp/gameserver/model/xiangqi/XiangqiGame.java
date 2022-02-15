@@ -252,14 +252,18 @@ public class XiangqiGame extends Game implements Serializable{
 		String newBoard = boardToFEN(board);
 		return newBoard;
 	}
-	
-	public boolean checkMove(String moveString, Player player, String board) {
+
+	public boolean checkMove(String moveString, Player player, char[][] board){
 		if(!moveInBoard(moveString)) return false;
-		char[][] boardArr = FENtoBoard(board);
+		char[][] boardArr = board;
 		int[] move = getTranslatedMove(moveString);
 		if(!startZielIsValid(boardArr, move, player)) return false;
 		if(!checkFigur(move, boardArr , player)) return false;
 		return true;
+	}
+	
+	public boolean checkMove(String moveString, Player player, String board) {
+		return checkMove(moveString, player, FENtoBoard(board));
 	}
 
 	public boolean checkMove(String moveString, Player player){
@@ -404,12 +408,13 @@ public class XiangqiGame extends Game implements Serializable{
 				for(int j=0;j<9;j++) {
 					String moveTo=validSpalte.charAt(j)+Integer.toString(9-i);
 					String moveString=figuren[n]+"-"+moveTo;
-					//get moveString
-					if(checkMove(moveString, player, boardToFEN(board))) {
+					if (checkMove(moveString, player, board)) {
 						String newBoard = doMove(moveString, player);
-						if(!isCheck(player, newBoard))
+						if(newBoard=="") continue;
+						if(!isCheck(player, newBoard)) {
 							moveList.add(moveString);
-					}
+						}
+					} 
 				}
 			}
 		}
@@ -484,13 +489,12 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean isCheck(Player player, char[][] board) {
-		String generalCoordinate = getGeneralCoordinate(player, board);
 		String[] figuren = new String[16];
 		String validSpalte = "abcdefghij";
 		int counter = 0;
 		boolean isRedPlayer = player == redPlayer;
 		Player oppositePlayer = player == redPlayer ? blackPlayer : redPlayer;
-		//sammeln figuren
+		
 		for(int i=0;i<10;i++) {
 			for(int j=0;j<9;j++) {
 				char figur = board[i][j];
@@ -502,10 +506,10 @@ public class XiangqiGame extends Game implements Serializable{
 		}
 		
 		for(int n=0;n<counter;n++) {
-			String moveString = figuren[n]+"-"+generalCoordinate;
-//			String newBoard = doMove(moveString, oppositePlayer);
-//			if(newBoard=="cannot eat general") return true;
-			if (checkMove(moveString, oppositePlayer, boardToFEN(board))) {
+			String moveString = figuren[n]+"-"+getGeneralCoordinate(player, board);
+			if (checkMove(moveString, oppositePlayer, board)) {
+				String newBoard = doMove(moveString, oppositePlayer);
+				if(newBoard=="") continue;
 				return true;
 			}
 		}
