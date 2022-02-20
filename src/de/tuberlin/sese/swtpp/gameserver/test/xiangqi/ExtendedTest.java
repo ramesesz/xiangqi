@@ -70,34 +70,39 @@ public class ExtendedTest {
 		}
 	}
 	
-    public void printBoardArr(char[][] boardArr) {
+    public void printBoard(char[][] boardArr) {
     	for(int i=0;i<boardArr.length;i++) {
-    		System.out.print(9-i + "| ");
+    		System.out.print(9-i + " ");
     		for(int j=0;j<boardArr[i].length;j++) {
-    			System.out.print(boardArr[i][j]+"-");
+    			System.out.print((boardArr[i][j] == ' ' ? "." : boardArr[i][j])+" ");
     		}
     		System.out.println("");
     	}
-    	System.out.println(" |___________________");
-    	System.out.println(" | a b c d e f g h i ");
+    	System.out.println("* a b c d e f g h i ");
     }
     
     public void printBoard(String board) {
-    	printBoardArr(game.FENtoBoard(board));
+    	printBoard(game.FENtoBoard(board));
     }
     
     public void printBoard() {
     	printBoard(game.getBoard());
     }
     
-    public void setFigur(int[] pos, char figur, char[][] board) {
-    	board[pos[0]][pos[1]] = figur;
-    	game.setBoard(game.boardToFEN(board));
-    }
-    
-    public void setFigur(int[] pos, char figur) {
-    	char[][] board = game.FENtoBoard(game.getBoard());
-    	setFigur(pos,figur,board);
+    // board where it should be a checkmate, and the player got checkmated
+    public void checkMater(String board, Player player) {
+    	startGame(board,true);
+    	printBoard();
+    	boolean isCheck = game.isCheck(player, game.FENtoBoard(board));
+    	boolean isCheckMate = game.isCheckmate(player, game.FENtoBoard(board));
+    	System.out.println("isCheck: " + isCheck);
+    	System.out.println("isCheckmate: " + isCheckMate);
+    	ArrayList<String> moves = game.validMoves(player, game.FENtoBoard(board));
+        for(String move:moves) System.out.println(move);
+        assertTrue(isCheck);
+        assertTrue(isCheckMate);
+        boolean isRedChecked = player == redPlayer;
+        assertGameState(board, !isRedChecked, true, !isRedChecked);
     }
 
 	/*******************************************
@@ -203,24 +208,470 @@ public class ExtendedTest {
 ////        for(String move:moves1) System.out.println(move);
 //    }
     
+//    @Test
+//    public void testingg() {
+////    	String boardStr = "8R/9/R3g4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
+////    	String boardStr = "5g1R1/3R5/C3H4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
+//    	String boardStr = "2R6/3R3g1/R8/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
+////    	String boardStr = "R2g5/R8/R8/9/9/9/9/9/9/4G4";
+//    	startGame(boardStr,true);
+//    	printBoard();
+//    	System.out.println(game.isCheck(blackPlayer, game.FENtoBoard(boardStr)));
+//    	System.out.println(game.isCheckmate(blackPlayer, game.FENtoBoard(boardStr)));
+//    	ArrayList<String> moves2 = game.validMoves(blackPlayer, game.FENtoBoard(boardStr));
+//        for(String move:moves2) System.out.println(move);
+//    	
+//    }
+    
+//    @Test
+//    public void testMultipleCheckMate() {
+////    	String board1 = "8R/9/R3g4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
+//    	String board2 = "5g1R1/3R5/C3H4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
+//    	String board3 = "2R6/3R3g1/R8/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
+//    	String board4 = "R2g5/R8/R8/9/9/9/9/9/9/4G4";
+////    	checkMater(board1, blackPlayer);
+//    	checkMater(board2, blackPlayer);
+//    	checkMater(board3, blackPlayer);
+//    	checkMater(board4, blackPlayer);
+//    }
+    
     @Test
-    public void testingg() {
-//    	String boardStr = "8R/9/R3g4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2";
-    	String boardStr = "R3g4/R8/R8/9/9/9/9/9/9/4G4";
-    	startGame(boardStr,true);
-    	printBoard();
-    	System.out.println(game.isCheck(blackPlayer, game.FENtoBoard(boardStr)));
-    	System.out.println(game.isCheckmate(blackPlayer, game.FENtoBoard(boardStr)));
-    	ArrayList<String> moves2 = game.validMoves(blackPlayer, game.FENtoBoard(boardStr));
-        for(String move:moves2) System.out.println(move);
-    	
+    public void testGame1() {
+    	startGame(startFEN, true);
+    	assertMove("d0-e1", true, true);
+    	assertMove("h7-h3", false, true);
+    	assertMove("h2-h9", true, true);
+    	assertMove("b9-c7", false, true);
+    	assertMove("h9-f9", true, true);
+    	assertMove("g9-e7", false, true);
+    	assertMove("f9-d9", true, true);
+    	assertMove("h3-e3", false, true);
+    	assertMove("e0-d0", true, true);
+    	assertMove("i9-i8", false, true);
+    	assertMove("d9-a9", true, true);
+    	assertMove("e9-e8", false, true);
+    	assertMove("h0-g2", true, true);
+    	assertMove("e3-f3", false, true);
+    	assertMove("a9-a7", true, true);
+    	assertMove("b7-b3", false, true);
+    	assertMove("a7-e7", true, true);
+    	assertMove("i8-i9", false, true);
+    	assertMove("b0-c2", true, true);
+    	assertMove("f3-f1", false, true);
+    	assertMove("g2-e3", true, true);
+    	assertMove("f1-h1", false, true);
+    	assertMove("g3-g4", true, true);
+    	assertMove("i9-d9", false, true);
+    	assertMove("d0-e0", true, true);
+    	assertMove("d9-d3", false, true);
+    	assertMove("i0-i1", true, true);
+    	assertMove("h1-h5", false, true);
+    	assertMove("i1-h1", true, true);
+    	assertMove("h5-a5", false, true);
+    	assertMove("h1-h8", true, true);
+    	assertMove("e8-e9", false, true);
+    	assertMove("g4-g5", true, true);
+    	assertMove("b3-b9", false, true);
+    	assertMove("b2-b6", true, true);
+    	assertMove("c9-a7", false, true);
+    	assertMove("b6-e6", true, true);
+    	assertMove("e9-f9", false, true);
+    	assertMove("e7-a7", true, true);
+    	assertMove("c7-e6", false, true);
+    	assertMove("h8-h9", true, true);
+    	assertMove("f9-f8", false, true);
+    	assertMove("c0-a2", true, true);
+    	assertMove("b9-b8", false, true);
+    	assertMove("a0-b0", true, true);
+    	assertMove("b8-c8", false, true);
+    	assertMove("b0-b8", true, true);
+    	assertMove("d3-d8", false, true);
+    	assertMove("b8-c8", true, true);
+    	assertMove("i6-i5", false, true);
+    	assertMove("c8-d8", true, true);
+    	assertMove("f8-f7", false, true);
+    	assertMove("d8-d7", true, true);
+    	assertMove("f7-f8", false, true);
+    	assertMove("e3-d5", true, true);
+    	assertMove("e6-g5", false, true);
+    	assertMove("d5-e7", true, true);
+    	assertMove("a5-a2", false, true);
+    	assertMove("d7-d8", true, true);
+    	checkMater(game.getBoard(), blackPlayer);
     }
     
     @Test
-    public void testSchach() {
+    public void testGame2() {
+    	startGame(startFEN, true);
+    	assertMove("h0-g2", true, true);
+    	assertMove("b7-b0", false, true);
+    	assertMove("b2-e2", true, true);
+    	assertMove("b0-d0", false, true);
+    	assertMove("c0-a2", true, true);
+    	assertMove("d0-f0", false, true);
+    	assertMove("a0-d0", true, true);
+    	assertMove("f0-d0", false, true);
+    	assertMove("h2-h4", true, true);
+    	assertMove("d0-g0", false, true);
+    	assertMove("h4-h9", true, true);
+    	assertMove("a9-a8", false, true);
+    	assertMove("a3-a4", true, true);
+    	assertMove("h7-e7", false, true);
+    	assertMove("h9-h6", true, true);
+    	assertMove("i9-h9", false, true);
+    	assertMove("i0-h0", true, true);
+    	assertMove("h9-h6", false, true);
+    	assertMove("h0-g0", true, true);
+    	assertMove("a8-b8", false, true);
+    	assertMove("e2-e6", true, true);
+    	assertMove("d9-e8", false, true);
+    	assertMove("e6-e4", true, true);
+    	assertMove("b8-b1", false, true);
+    	assertMove("g2-i1", true, true);
+    	assertMove("e9-d9", false, true);
+    	assertMove("i3-i4", true, true);
+    	assertMove("e7-e3", false, true);
+    	assertMove("a4-a5", true, true);
+    	assertMove("c9-e7", false, true);
+    	assertMove("a5-a6", true, true);
+    	assertMove("g9-i7", false, true);
+    	assertMove("g0-g2", true, true);
+    	assertMove("b9-c7", false, true);
+    	assertMove("e4-c4", true, true);
+    	assertMove("h6-h0", false, true);
+    	assertMove("g2-g0", true, true);
+    	assertMove("h0-g0", false, true);
+    	assertMove("i1-g0", true, true);
+    	assertMove("e3-e4", false, true);
+    	assertMove("a6-a7", true, true);
+    	assertMove("e4-h4", false, true);
+    	assertMove("g0-f2", true, true);
+    	assertMove("h4-h0", false, true);
+    	assertMove("c4-f4", true, true);
+    	assertMove("g6-g5", false, true);
+    	assertMove("c3-c4", true, true);
+    	assertMove("c6-c5", false, true);
+    	assertMove("a7-b7", true, true);
+    	assertMove("c5-c4", false, true);
+    	assertMove("i4-i5", true, true);
+    	assertMove("i6-i5", false, true);
+    	assertMove("f4-f5", true, true);
+    	assertMove("g5-g4", false, true);
+    	assertMove("f2-g4", true, true);
+    	assertMove("c4-c3", false, true);
+    	assertMove("a2-c4", true, true);
+    	assertMove("c3-c2", false, true);
+    	assertMove("g4-i5", true, true);
+    	assertMove("c2-c1", false, true);
+    	assertMove("f5-c5", true, true);
+    	assertMove("c1-c0", false, true);
+    	assertMove("i5-g6", true, true);
+    	assertMove("c0-d0", false, true);
+    	assertMove("e0-f0", true, true);
+    	assertMove("h0-h1", false, true);
+    	assertMove("g3-g4", true, true);
+    	assertMove("h1-c1", false, true);
+    	assertMove("c4-e2", true, true);
+    	assertMove("c7-d5", false, true);
+    	assertMove("g6-f8", true, true);
+    	assertMove("d9-e9", false, true);
+    	assertMove("c5-c4", true, true);
+    	assertMove("d0-e0", false, true);
+    	assertMove("f0-f1", true, true);
+    	assertMove("e0-f0", false, true);
+    	assertMove("c4-d4", true, true);
+    	assertMove("f0-e0", false, true);
+    	assertMove("d4-e4", true, true);
+    	assertMove("e0-d0", false, true);
+    	assertMove("f1-f0", true, true);
+    	assertMove("d5-c3", false, true);
+    	assertMove("e2-c4", true, true);
+    	assertMove("c1-c0", false, true);
+    	assertMove("e4-e0", true, true);
+    	assertMove("c0-e0", false, true);
+    	assertMove("f8-e6", true, true);
+    	assertMove("e0-e1", false, true);
+    	assertMove("f0-f1", true, true);
+    	assertMove("e1-e3", false, true);
+    	assertMove("f1-f0", true, true);
+    	assertMove("e3-e2", false, true);
+    	assertMove("b7-a7", true, true);
+    	assertMove("e2-c2", false, true);
+    	assertMove("e6-d4", true, true);
+    	assertMove("c2-c0", false, true);
+    	checkMater(game.getBoard(), redPlayer);
+    }
+    
+    @Test
+    public void testGame3() {
+    	// no check mate here
+    	startGame(startFEN, true);
+    	assertMove("c3-c4", true, true);
+    	assertMove("h7-d7", false, true);
+    	assertMove("g0-e2", true, true);
+    	assertMove("h9-g7", false, true);
+    	assertMove("b2-d2", true, true);
+    	assertMove("b9-c7", false, true);
+    	assertMove("b0-c2", true, true);
+    	assertMove("a9-b9", false, true);
+    	assertMove("a0-b0", true, true);
+    	assertMove("b7-b5", false, true);
+    	assertMove("i3-i4", true, true);
+    	assertMove("i9-h9", false, true);
+    	assertMove("h0-i2", true, true);
+    	assertMove("g6-g5", false, true);
+    	assertMove("f0-e1", true, true);
+    	assertMove("c9-e7", false, true);
+    	assertMove("b0-b4", true, true);
+    	assertMove("h9-h3", false, true);
+    	assertMove("h2-f2", true, true);
+    	assertMove("f9-e8", false, true);
+    	assertMove("c2-d4", true, true);
+    	assertMove("b5-d5", false, true);
+    	assertMove("b4-b9", true, true);
+    	assertMove("c7-b9", false, true);
+    	assertMove("f2-f3", true, true);
+    	assertMove("h3-h1", false, true);
+    	assertMove("d2-d5", true, true);
+    	assertMove("d7-d4", false, true);
+    	assertMove("d5-b5", true, true);
+    	assertMove("g7-f5", false, true);
+    	assertMove("e3-e4", true, true);
+    	assertMove("f5-d6", false, true);
+    	assertMove("i0-f0", true, true);
+    	assertMove("c6-c5", false, true);
+    	assertMove("c4-c5", true, true);
+    	assertMove("d6-b5", false, true);
+    	assertMove("c5-b5", true, true);
+    	assertMove("b9-c7", false, true);
+    	assertMove("b5-b6", true, true);
+    	assertMove("c7-d5", false, true);
+    	assertMove("f3-e3", true, true);
+    	assertMove("h1-h6", false, true);
+    	assertMove("f0-f5", true, true);
+    	assertMove("d5-b4", false, true);
+    	assertMove("f5-f2", true, true);
+    	assertMove("d4-i4", false, true);
+    	assertMove("e2-c4", true, true);
+    	assertMove("g5-g4", false, true);
+    	assertMove("g3-g4", true, true);
+    	assertMove("i4-e4", false, true);
+    	assertMove("f2-f4", true, true);
+    	assertMove("e4-e5", false, true);
+    	assertMove("f4-e4", true, true);
+    	assertMove("h6-h2", false, true);
+    	assertMove("e3-e5", true, true);
+    	assertMove("e6-e5", false, true);
+    	assertMove("e4-e2", true, true);
+    	assertMove("h2-e2", false, true);
+    	assertMove("c0-e2", true, true);
+    	assertMove("b4-c2", false, true);
+    	assertMove("b6-a6", true, true);
+    	assertMove("i6-i5", false, true);
+    	assertMove("i2-g3", true, true);
+    	assertMove("c2-d4", false, true);
+    	assertMove("g4-g5", true, true);
+    	assertMove("e7-g5", false, true);
+    	assertMove("a6-b6", true, true);
+    	assertMove("d4-f3", false, true);
+    	assertMove("a3-a4", true, true);
+    	assertMove("e5-e4", false, true);
+    	assertMove("e0-f0", true, true);
+    	assertMove("e4-d4", false, true);
+    	assertMove("b6-b7", true, true);
+    	assertMove("f3-e5", false, true);
+    	assertMove("c4-a2", true, true);
+    	assertMove("e5-c6", false, true);
+    	assertMove("g3-f5", true, true);
+    	assertMove("e8-f7", false, true);
+    	assertMove("b7-c7", true, true);
+    	assertMove("d4-d3", false, true);
+    	assertMove("f5-d6", true, true);
+    	assertMove("d9-e8", false, true);
+    	assertMove("f0-e0", true, true);
+    	assertMove("i5-i4", false, true);
+    	assertMove("a2-c0", true, true);
+    	assertMove("i4-h4", false, true);
+    	assertMove("d6-c4", true, true);
+    	assertMove("d3-c3", false, true);
+    	assertMove("e2-g0", true, true);
+    	assertMove("c3-c2", false, true);
+    	assertMove("c7-c8", true, true);
+    	assertMove("h4-h3", false, true);
+    	assertMove("a4-a5", true, true);
+    	assertMove("c2-c1", false, true);
+    	assertMove("c0-e2", true, true);
+    	assertMove("h3-g3", false, true);
+    	assertMove("c4-d6", true, true);
+    	assertMove("g3-g2", false, true);
+    	assertMove("a5-b5", true, true);
+    	assertMove("c6-d4", false, true);
+    	assertMove("d6-e4", true, true);
+    	assertMove("g5-e7", false, true);
+    	assertMove("e2-c4", true, true);
+    	assertMove("e9-d9", false, true);
+    	assertMove("g0-e2", true, true);
+    	assertMove("c1-d1", false, true);
+    	assertMove("e2-g4", true, true);
+    	assertMove("g2-g1", false, true);
+    	assertMove("b5-b6", true, true);
+    	assertMove("g9-i7", false, true);
+    	assertMove("g4-i2", true, true);
+    	assertMove("i7-g5", false, true);
+    	assertMove("i2-g4", true, true);
+    	assertMove("g5-i7", false, true);
+    	assertMove("g4-i2", true, true);
+    	assertMove("e7-g5", false, true);
+    	assertMove("i2-g4", true, true);
+    	assertMove("e8-d7", false, true);
+    	assertMove("e4-f2", true, true);
+    	assertMove("d1-c1", false, true);
+    	assertMove("f2-e4", true, true);
+    	assertMove("d9-e9", false, true);
+    	assertMove("e4-d6", true, true);
+    	assertMove("d4-f3", false, true);
+    	assertMove("c4-e2", true, true);
+    	assertMove("c1-d1", false, true);
+    	assertMove("e1-f2", true, true);
+    	assertMove("e9-f9", false, true);
+    	assertMove("d6-e4", true, true);
+    	assertMove("f3-d4", false, true);
+    	assertMove("d0-e1", true, true);
+    	assertMove("f9-f8", false, true);
+    	assertMove("e0-f0", true, true);
+    	assertMove("d7-e8", false, true);
+    	assertMove("e1-d2", true, true);
+    	assertMove("g5-e7", false, true);
+    	assertMove("c8-d8", true, true);
+    	assertMove("i7-g5", false, true);
+    	assertMove("d8-c8", true, true);
+    	assertMove("e8-d7", false, true);
+    	assertMove("c8-d8", true, true);
+    	assertMove("d7-e8", false, true);
+    	assertMove("d8-c8", true, true);
+    	assertMove("e8-d7", false, true);
+    	assertMove("c8-d8", true, true);
+    	assertMove("d7-e8", false, true);
+    	printBoard();
+    }
+    
+    @Test
+    public void testGame4() {
+    	startGame(startFEN, true);
+    	assertMove("e3-e4", true, true);
+    	assertMove("b7-c7", false, true);
+    	assertMove("h0-g2", true, true);
+    	assertMove("c7-c3", false, true);
+    	assertMove("b2-e2", true, true);
+    	assertMove("c3-i3", false, true);
+    	assertMove("i0-i3", true, true);
+    	assertMove("h9-g7", false, true);
+    	assertMove("h2-h6", true, true);
+    	assertMove("e6-e5", false, true);
+    	assertMove("e4-e5", true, true);
+    	assertMove("g7-e6", false, true);
+    	assertMove("e2-e6", true, true);
+    	assertMove("b9-c7", false, true);
+    	assertMove("e6-f6", true, true);
+    	assertMove("a9-b9", false, true);
+    	assertMove("b0-c2", true, true);
+    	assertMove("b9-b3", false, true);
+    	assertMove("f6-a6", true, true);
+    	assertMove("b3-a3", false, true);
+    	assertMove("a0-a3", true, true);
+    	assertMove("c7-a6", false, true);
+    	assertMove("a3-a6", true, true);
+    	assertMove("i9-i8", false, true);
+    	assertMove("h6-c6", true, true);
+    	assertMove("g6-g5", false, true);
+    	assertMove("a6-a9", true, true);
+    	assertMove("h7-h0", false, true);
+    	assertMove("c0-e2", true, true);
+    	assertMove("i6-i5", false, true);
+    	assertMove("e5-e6", true, true);
+    	assertMove("i5-i4", false, true);
+    	assertMove("i3-i0", true, true);
+    	assertMove("h0-h2", false, true);
+    	assertMove("i0-h0", true, true);
+    	assertMove("h2-i2", false, true);
+    	assertMove("g0-i2", true, true);
+    	assertMove("i8-f8", false, true);
+    	assertMove("f0-e1", true, true);
+    	assertMove("f8-f1", false, true);
+    	assertMove("a9-c9", true, true);
+    	assertMove("f1-i1", false, true);
+    	assertMove("e6-e7", true, true);
+    	assertMove("i1-i2", false, true);
+    	assertMove("c6-e6", true, true);
+    	assertMove("f9-e8", false, true);
+    	assertMove("e7-e8", true, true);
+    	assertMove("e9-e8", false, true);
+    	assertMove("h0-h7", true, true);
+    	assertMove("i2-g2", false, true);
+    	assertMove("c9-c8", true, true);
+    	assertMove("e8-e9", false, true);
+    	assertMove("h7-h9", true, true);
+    	assertMove("g2-e2", false, true);
+    	assertMove("h9-g9", true, true);
+    	checkMater(game.getBoard(), blackPlayer);
+    }
+    
+    
+    @Test
+    public void todesBlickTestValidMove() {
+    	startGame(startFEN, true);
+    	assertMove("e3-e4", true, true);
+    	assertMove("e6-e5", false, true);
+    	assertMove("e4-e5", true, true);
+    	assertMove("c6-c5", false, true);
+    	assertMove("e5-e6", true, true);
+    	assertMove("g6-g5", false, true);
+    	printBoard();
+    	ArrayList<String> moves = game.validMoves(redPlayer);
+    	for(String move:moves) System.out.println(move);
+    }
+    
+    @Test
+    public void test() {
     	startGame(startFEN,true);
     	printBoard();
-    	System.out.println(game.isCheck(redPlayer,"rCeag2R1/4a3r/1c5c1/s1s3s1s/4S4/9/S1S3S1S/9/9/RHEAGAEHR"));
+    	assertFalse(game.isCheck(redPlayer));
+    	assertFalse(game.isCheck(blackPlayer));
+    	assertFalse(game.isCheckmate(redPlayer));
+    	assertFalse(game.isCheckmate(blackPlayer));
+    }
+    
+    @Test
+    public void general404() {
+    	startGame("rhea1aehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEA1AEHR", true);
+    	assertFalse(game.isCheck(redPlayer));
+    	assertFalse(game.isCheck(blackPlayer));
+    }
+    
+    @Test
+    public void checkFigurInvalid() {
+    	startGame("rheazaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAZAEHR", true);
+    	assertMove("e0-e1", true, false);
+    }
+    
+    @Test
+    public void todesBlickMove() {
+    	startGame(startFEN, true);
+    	assertMove("e3-e4", true, true);
+    	assertMove("e6-e5", false, true);
+    	assertMove("e4-e5", true, true);
+    	assertMove("a6-a5", false, true);
+    	assertMove("e5-d5", true, false);
+    }
+    
+    @Test
+    public void tryMoveWhenCheck() {
+    	startGame("5g1R1/9/C2RH4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2", false);
+    	assertMove("f9-d9", false, false);
+    	assertMove("f9-f8", false, true);
+    	assertMove("a7-b7", true, true);
+    	assertMove("f8-f9", false, false);
+    	printBoard();
     }
 
     // functions : 
