@@ -227,10 +227,12 @@ public class XiangqiGame extends Game implements Serializable{
 		if(!checkMove(moveString, player)) return false;
 		// do the move
 		String newBoard = doMove(moveString, player);
-		if(newBoard=="") return false;
 		if(getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
 		// check if player is still checked
 		if(isCheck(player,newBoard)) return false;
+		// check if todesblick
+		if(isTodesBlick(newBoard)) return false;
+		// set the new board
 		else setBoard(newBoard);
 		// set next player
 		this.setNextPlayer(player == redPlayer ? blackPlayer : redPlayer);
@@ -244,11 +246,12 @@ public class XiangqiGame extends Game implements Serializable{
 		char[][] board = FENtoBoard(getBoard());
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
-		char zielFigur = board[move[2]][move[3]];
+		// char zielFigur = board[move[2]][move[3]];
 		// You can't directly kill the general
 		//if (Character.toLowerCase(zielFigur)=='g') return "cannot eat general!";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
+		// if(isTodesBlick(board)) return "";
 		String newBoard = boardToFEN(board);
 		return newBoard;
 	}
@@ -410,7 +413,7 @@ public class XiangqiGame extends Game implements Serializable{
 					String moveString=figuren[n]+"-"+moveTo;
 					if (checkMove(moveString, player, board)) {
 						String newBoard = doMove(moveString, player);
-						if(newBoard=="") continue;
+						if(isTodesBlick(newBoard)) continue;
 						if(!isCheck(player, newBoard)) {
 							moveList.add(moveString);
 						}
@@ -456,14 +459,21 @@ public class XiangqiGame extends Game implements Serializable{
 
 		//if in the same column
 		if(spalteMove1 == spalteMove2){
-			int steps = zeileMove1 - zeileMove2;
-			for (int i = 1; i < steps; i++) {
-				if (Character.isAlphabetic(board[zeileMove1 - i][spalteMove1]))
+			int start = Math.min(zeileMove1, zeileMove2);
+			int end = Math.max(zeileMove1, zeileMove2);
+			for (int i = start+1; i < end; i++) {
+				if (Character.isAlphabetic(board[i][spalteMove1]))
 					return false;
 			}
+		} else {
+			return false;
 		}
 
 		return true;
+	}
+
+	public boolean isTodesBlick(String board){
+		return isTodesBlick(FENtoBoard(board));
 	}
 	
 	public String getGeneralCoordinate(Player player, char[][] board) {
@@ -509,7 +519,7 @@ public class XiangqiGame extends Game implements Serializable{
 			String moveString = figuren[n]+"-"+getGeneralCoordinate(player, board);
 			if (checkMove(moveString, oppositePlayer, board)) {
 				String newBoard = doMove(moveString, oppositePlayer);
-				if(newBoard=="") continue;
+				if(isTodesBlick(newBoard)) continue;
 				return true;
 			}
 		}

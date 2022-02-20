@@ -68,6 +68,20 @@ public class TryMoveIntegrationTest {
 	/*******************************************
 	 * !!!!!!!!! To be implemented !!!!!!!!!!!!
 	 *******************************************/
+
+	String startFEN = "rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAGAEHR";
+
+	// * 9 r h e a g a e h r 
+	// * 8 . . . . . . . . . 
+	// * 7 . c . . . . . c . 
+	// * 6 s . s . s . s . s 
+	// * 5 . . . . . . . . . 
+	// * 4 . . . . . . . . . 
+	// * 3 S . S . S . S . S 
+	// * 2 . C . . . . . C . 
+	// * 1 . . . . . . . . . 
+	// * 0 R H E A G A E H R 
+	// * + a b c d e f g h i 
 	
 	@Test
 	public void exampleTest() {
@@ -78,4 +92,96 @@ public class TryMoveIntegrationTest {
 
 	//TODO: implement test cases of same kind as example here
 
+	@Test
+	public void soldierWrongB() {
+		startGame(startFEN,false);
+		// tried to move red pawn
+		assertMove("e3-e4",false,false);
+		// tried to move horizontal in own field
+		assertMove("c6-d6",false,false);
+		// tried to move backward
+		assertMove("c6-c7",false,false);
+		// tried to move diagonally
+		assertMove("c6-d5",false,false);
+		assertMove("c6-b5",false,false);
+		assertMove("c6-b7",false,false);
+		// confirm
+		assertGameState(startFEN, false, false, false);
+	}
+
+	@Test
+	public void rookWrongR() {
+		startGame(startFEN,true);
+		// tried to capture own horizontally
+		assertMove("i0-h0",true,false);
+		// tried to capture own vertically
+		assertMove("i0-i3",true,false);
+		// tried to move diagonally
+		assertMove("i0-h1",true,false);
+		// confirm
+		assertGameState(startFEN, true, false, false);
+	}
+
+	@Test
+	public void horseWrongB() {
+		startGame(startFEN, false);
+		// tried to move but blocked
+		assertMove("b9-d8",false,false);
+		// invalid moves
+		assertMove("b9-d7",false,false);
+		assertMove("b9-a8",false,false);
+	}
+
+	@Test
+	public void elephantWrongR() {
+		startGame(startFEN, true);
+		// invalid moves
+		assertMove("c0-d1",true,false);
+		assertMove("c0-c1",true,false);
+		assertMove("c0-b1",true,false);
+		assertMove("c0-c2",true,false);
+		// try to move and try to cross river 1
+		assertMove("c0-e2",true,true);
+		// opponent turn
+		assertMove("e6-e5",false,true);
+		// try to move and try to cross river 2
+		assertMove("e2-g4",true,true);
+		// opponent turn
+		assertMove("a6-a5",false,true);
+		// try to move and try to cross river 3
+		assertMove("g4-e6",true,false);
+	}
+
+	@Test
+	public void advisorWrongB() {
+		startGame(startFEN, false);
+		// tried to move to outside palast
+		assertMove("d9-c8",false,false);
+		// tried to move vertically
+		assertMove("d9-d8",false,false);
+	}
+
+	@Test
+	public void generalWrongR() {
+		startGame(startFEN, true);
+		// tried to move diagonally
+		assertMove("e0-d1",true,false);
+		assertMove("e0-f1",true,false);
+		// blocked
+		assertMove("e0-d0",true,false);
+		assertMove("e0-f0",true,false);
+	}
+
+	@Test
+	public void cannonWrongB() {
+		startGame(startFEN, false);
+		// tried to eat own
+		assertMove("b7-h7",false,false);
+		// tried to move but blocked
+		assertMove("b7-i7",false,false);
+		// tried to pwn but no one to jump
+		assertMove("b7-b2",false,false);
+		// tried to move but blocked
+		assertMove("b7-b1",false,false);
+	}
 }
