@@ -227,7 +227,6 @@ public class XiangqiGame extends Game implements Serializable{
 		if(!checkMove(moveString, player)) return false;
 		// do the move
 		String newBoard = doMove(moveString, player);
-		if(getGeneralCoordinate(player==redPlayer?blackPlayer:redPlayer)=="") return false;
 		// check if player is still checked
 		if(isCheck(player,newBoard)) return false;
 		// check if todesblick
@@ -495,7 +494,7 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public String getGeneralCoordinate(Player player) {
-		return getGeneralCoordinate(player, FENtoBoard(getBoard()));
+		return getGeneralCoordinate(player, getBoard());
 	}
 
 	public boolean isCheck(Player player, char[][] board) {

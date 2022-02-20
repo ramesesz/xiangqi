@@ -89,16 +89,6 @@ public class ExtendedTest {
     	printBoard(game.getBoard());
     }
     
-    public void setFigur(int[] pos, char figur, char[][] board) {
-    	board[pos[0]][pos[1]] = figur;
-    	game.setBoard(game.boardToFEN(board));
-    }
-    
-    public void setFigur(int[] pos, char figur) {
-    	char[][] board = game.FENtoBoard(game.getBoard());
-    	setFigur(pos,figur,board);
-    }
-    
     // board where it should be a checkmate, and the player got checkmated
     public void checkMater(String board, Player player) {
     	startGame(board,true);
@@ -626,8 +616,9 @@ public class ExtendedTest {
     	checkMater(game.getBoard(), blackPlayer);
     }
     
+    
     @Test
-    public void todesBlickTest() {
+    public void todesBlickTestValidMove() {
     	startGame(startFEN, true);
     	assertMove("e3-e4", true, true);
     	assertMove("e6-e5", false, true);
@@ -640,16 +631,46 @@ public class ExtendedTest {
     	for(String move:moves) System.out.println(move);
     }
     
-//    @Test
-//    public void testSchach() {
-//    	startGame(startFEN,true);
-//    	printBoard();
-//    	System.out.println(game.isCheck(redPlayer,"rCeag2R1/4a3r/1c5c1/s1s3s1s/4S4/9/S1S3S1S/9/9/RHEAGAEHR"));
-//    }
-    
     @Test
     public void test() {
     	startGame(startFEN,true);
+    	printBoard();
+    	assertFalse(game.isCheck(redPlayer));
+    	assertFalse(game.isCheck(blackPlayer));
+    	assertFalse(game.isCheckmate(redPlayer));
+    	assertFalse(game.isCheckmate(blackPlayer));
+    }
+    
+    @Test
+    public void general404() {
+    	startGame("rhea1aehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEA1AEHR", true);
+    	assertFalse(game.isCheck(redPlayer));
+    	assertFalse(game.isCheck(blackPlayer));
+    }
+    
+    @Test
+    public void checkFigurInvalid() {
+    	startGame("rheazaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAZAEHR", true);
+    	assertMove("e0-e1", true, false);
+    }
+    
+    @Test
+    public void todesBlickMove() {
+    	startGame(startFEN, true);
+    	assertMove("e3-e4", true, true);
+    	assertMove("e6-e5", false, true);
+    	assertMove("e4-e5", true, true);
+    	assertMove("a6-a5", false, true);
+    	assertMove("e5-d5", true, false);
+    }
+    
+    @Test
+    public void tryMoveWhenCheck() {
+    	startGame("5g1R1/9/C2RH4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2", false);
+    	assertMove("f9-d9", false, false);
+    	assertMove("f9-f8", false, true);
+    	assertMove("a7-b7", true, true);
+    	assertMove("f8-f9", false, false);
     	printBoard();
     }
 
