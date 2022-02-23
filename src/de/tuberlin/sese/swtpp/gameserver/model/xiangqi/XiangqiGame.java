@@ -238,7 +238,12 @@ public class XiangqiGame extends Game implements Serializable{
 		// add to history
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
-		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, newBoard)) regularGameEnd(player);		return true;
+		ArrayList<String> validMoves = validMoves(player==redPlayer?blackPlayer:redPlayer, FENtoBoard(newBoard));
+		if (validMoves.size() == 0){
+			regularGameEnd(player);
+		} 
+		//if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, newBoard)) regularGameEnd(player);		return true;
+		return true;
 	}
 	
 	public String doMove(String moveString, Player player) {
