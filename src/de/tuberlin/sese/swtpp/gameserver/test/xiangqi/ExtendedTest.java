@@ -97,8 +97,8 @@ public class ExtendedTest {
     	boolean isCheckMate = game.isCheckmate(player, game.FENtoBoard(board));
     	System.out.println("isCheck: " + isCheck);
     	System.out.println("isCheckmate: " + isCheckMate);
-    	ArrayList<String> moves = game.validMoves(player, game.FENtoBoard(board));
-        for(String move:moves) System.out.println(move);
+//    	ArrayList<String> moves = game.validMoves(player, game.FENtoBoard(board));
+//        for(String move:moves) System.out.println(move);
         assertTrue(isCheck);
         assertTrue(isCheckMate);
         boolean isRedChecked = player == redPlayer;
@@ -680,9 +680,13 @@ public class ExtendedTest {
     @Test
     public void printGame() {
     	startGame("rheagaehr/9/1c5c1/s1s6/9/8S/S1S1R4/1C5C1/4R4/1HEAGAEH1", false);
-    	System.out.println("here i am");
+    	System.out.println("here i am" + game.getBoard());
     	printBoard();
     	ArrayList<String> moves = game.validMoves(blackPlayer);
+    	assertGameState("rheagaehr/9/1c5c1/s1s6/9/8S/S1S1R4/1C5C1/4R4/1HEAGAEH1", false, false, false);
+    	assertMove("c9-e7", false, true);
+    	assertGameState("rh1agaehr/9/1c2e2c1/s1s6/9/8S/S1S1R4/1C5C1/4R4/1HEAGAEH1", true, false, false);
+    	System.out.println("here i am" + game.getBoard());
     	for(String move:moves) System.out.println(move);
     }
 

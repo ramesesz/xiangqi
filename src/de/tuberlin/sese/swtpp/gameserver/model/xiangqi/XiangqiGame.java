@@ -534,10 +534,8 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean isCheckmate(Player player, char[][] board) {
-		if (isCheck(player, board)) {
-			ArrayList<String> validMoves = validMoves(player, board);
-			if (validMoves.size() == 0) return true;
-		}
+		ArrayList<String> validMoves = validMoves(player, board);
+		if (validMoves.size() == 0) return true;
 		return false;
 	}
 
