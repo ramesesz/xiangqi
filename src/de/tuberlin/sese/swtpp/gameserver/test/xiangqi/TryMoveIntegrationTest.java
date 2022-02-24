@@ -150,6 +150,9 @@ public class TryMoveIntegrationTest {
 		assertMove("a6-a5",false,true);
 		// try to move and try to cross river 3
 		assertMove("g4-e6",true,false);
+		assertMove("h2-h3",true,true);
+		assertMove("i6-i5",false,true);
+		assertMove("g4-i2",true,false);
 	}
 
 	@Test
@@ -183,5 +186,19 @@ public class TryMoveIntegrationTest {
 		assertMove("b7-b2",false,false);
 		// tried to move but blocked
 		assertMove("b7-b1",false,false);
+	}
+	
+	@Test
+	public void testRWon() {
+		startGame("7R1/5g3/C2RH4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2", true);
+		assertMove("d7-d8", true, true);
+		assertGameState("7R1/3R1g3/C3H4/s1s3s2/6h1s/9/S1S5S/c1H6/4A4/4GAE2", true, true, true);
+	}
+	
+	@Test
+	public void testBWon() {
+		startGame("4ga3/4a4/S3e3e/9/9/2EH2S2/2h6/2c6/1r7/3s1G3", false);
+		assertMove("c2-c0", false, true);
+		assertGameState("4ga3/4a4/S3e3e/9/9/2EH2S2/2h6/9/1r7/2cs1G3", false, true, false);
 	}
 }

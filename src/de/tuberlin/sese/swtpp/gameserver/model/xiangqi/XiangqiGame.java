@@ -538,6 +538,20 @@ public class XiangqiGame extends Game implements Serializable{
 		return isCheck(player, FENtoBoard(getBoard()));
 	}
 
+	public boolean isCheckmate(Player player, char[][] board) {
+		ArrayList<String> validMoves = validMoves(player, board);
+		if (validMoves.size() == 0) return true;
+		return false;
+	}
+
+	public boolean isCheckmate(Player player, String board) {
+		return isCheckmate(player, FENtoBoard(board));
+	}
+
+	public boolean isCheckmate(Player player) {
+		return isCheckmate(player, FENtoBoard(getBoard()));
+	}
+
 	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
 		char figur = board[translatedMove[0]][translatedMove[1]];
 		switch (figur) {
