@@ -549,7 +549,7 @@ public class XiangqiGame extends Game implements Serializable{
 	}
 
 	public boolean isCheckmate(Player player) {
-		return isCheckmate(player, FENtoBoard(getBoard()));
+		return isCheckmate(player, getBoard());
 	}
 
 	public boolean checkFigur(int[] translatedMove, char[][] board, Player player){
