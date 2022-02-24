@@ -238,7 +238,12 @@ public class XiangqiGame extends Game implements Serializable{
 		// add to history
 		this.history.add(new Move(moveString,getBoard(),player));
 		// check if someone won
-		if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, newBoard)) regularGameEnd(player);		return true;
+		ArrayList<String> validMoves = validMoves(player==redPlayer?blackPlayer:redPlayer, FENtoBoard(newBoard));
+		if (validMoves.size() == 0){
+			regularGameEnd(player);
+		} 
+		//if(isCheckmate(player==redPlayer?blackPlayer:redPlayer, newBoard)) regularGameEnd(player);		return true;
+		return true;
 	}
 	
 	public String doMove(String moveString, Player player) {
@@ -246,7 +251,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
 		// char zielFigur = board[move[2]][move[3]];
-		// You can't directly kill the general
+		// You can't directly kiill the general
 		//if (Character.toLowerCase(zielFigur)=='g') return "cannot eat general!";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
