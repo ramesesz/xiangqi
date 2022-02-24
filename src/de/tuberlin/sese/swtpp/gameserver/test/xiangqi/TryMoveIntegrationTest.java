@@ -150,6 +150,9 @@ public class TryMoveIntegrationTest {
 		assertMove("a6-a5",false,true);
 		// try to move and try to cross river 3
 		assertMove("g4-e6",true,false);
+		assertMove("h2-h3",true,true);
+		assertMove("i6-i5",false,true);
+		assertMove("g4-i2",true,false);
 	}
 
 	@Test

@@ -613,6 +613,7 @@ public class ExtendedTest {
     	assertMove("h7-h9", true, true);
     	assertMove("g2-e2", false, true);
     	assertMove("h9-g9", true, true);
+    	System.out.println(game.getBoard());
     	checkMater(game.getBoard(), blackPlayer);
     }
     
@@ -661,7 +662,9 @@ public class ExtendedTest {
     	assertMove("e6-e5", false, true);
     	assertMove("e4-e5", true, true);
     	assertMove("a6-a5", false, true);
+    	System.out.println(game.getBoard());
     	assertMove("e5-d5", true, false);
+    	printBoard();
     }
     
     @Test
@@ -672,6 +675,15 @@ public class ExtendedTest {
     	assertMove("a7-b7", true, true);
     	assertMove("f8-f9", false, false);
     	printBoard();
+    }
+    
+    @Test
+    public void printGame() {
+    	startGame("rheagaehr/9/1c5c1/s1s6/9/8S/S1S1R4/1C5C1/4R4/1HEAGAEH1", false);
+    	System.out.println("here i am");
+    	printBoard();
+    	ArrayList<String> moves = game.validMoves(blackPlayer);
+    	for(String move:moves) System.out.println(move);
     }
 
     // functions : 
