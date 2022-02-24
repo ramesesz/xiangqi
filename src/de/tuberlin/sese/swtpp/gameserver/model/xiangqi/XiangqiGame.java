@@ -251,7 +251,7 @@ public class XiangqiGame extends Game implements Serializable{
 		int[] move = getTranslatedMove(moveString);
 		char startFigur = board[move[0]][move[1]];
 		// char zielFigur = board[move[2]][move[3]];
-		// You can't directly kill the general
+		// You can't directly kiill the general
 		//if (Character.toLowerCase(zielFigur)=='g') return "cannot eat general!";
 		board[move[0]][move[1]] = ' ';
 		board[move[2]][move[3]] = startFigur;
